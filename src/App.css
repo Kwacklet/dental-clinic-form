@@ -1,0 +1,643 @@
+/* ============ App shell ============ */
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--color-bg-subtle);
+}
+
+.app-header {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.app-header-inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 12px 20px;
+}
+
+.app-header-title {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.app-content {
+  flex: 1;
+  width: 100%;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 28px 20px 48px;
+}
+
+.app-footer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--color-border);
+  text-align: center;
+  font-size: 0.83rem;
+  color: var(--color-text-muted);
+}
+
+.page-heading {
+  margin-bottom: 16px;
+}
+
+.page-heading h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.page-heading p {
+  color: var(--color-text-muted);
+}
+
+/* ============ Notices ============ */
+.notice {
+  margin-bottom: 20px;
+  padding: 10px 14px;
+  border-left: 3px solid;
+  background: #fff;
+  font-size: 0.9rem;
+}
+
+.notice-info {
+  border-color: var(--color-primary);
+  color: var(--color-text-muted);
+}
+
+.notice-error {
+  border-color: var(--color-error);
+  background: var(--color-error-soft);
+  color: #8f2a2a;
+}
+
+.sent-confirmation {
+  max-width: 640px;
+  margin: 24px auto 0;
+}
+
+.notice-success {
+  border-color: var(--color-success);
+  background: var(--color-success-soft);
+  color: #17603f;
+}
+
+/* ============ Buttons ============ */
+.button {
+  min-height: 40px;
+  padding: 8px 20px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.93rem;
+}
+
+.button:focus-visible,
+.link-button:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.button-primary {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.button-primary:hover {
+  background: var(--color-primary-hover);
+}
+
+.button-secondary {
+  background: #fff;
+  border-color: var(--color-border-strong);
+}
+
+.button-secondary:hover {
+  background: var(--color-bg-subtle);
+}
+
+.link-button {
+  padding: 0;
+  border: none;
+  border-radius: 2px;
+  background: none;
+  color: var(--color-primary);
+  font-size: 0.85rem;
+}
+
+.link-button:hover {
+  text-decoration: underline;
+}
+
+.button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.button-push-right {
+  margin-left: auto;
+}
+
+/* ============ Progress indicator ============ */
+.progress {
+  margin-bottom: 12px;
+}
+
+.progress-text {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 16px;
+  margin-bottom: 8px;
+  font-size: 0.88rem;
+}
+
+.progress-count {
+  font-weight: 600;
+}
+
+.progress-next {
+  color: var(--color-text-muted);
+}
+
+.progress-segments {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.progress-segment {
+  display: block;
+  width: 100%;
+  height: 8px;
+  padding: 0;
+  border: none;
+  border-radius: 2px;
+  background: var(--color-border);
+}
+
+.progress-segment:disabled {
+  cursor: default;
+}
+
+.progress-segment-done {
+  background: var(--color-teal);
+}
+
+.progress-segment-done:hover {
+  background: #0f7a70;
+}
+
+.progress-segment-current {
+  background: var(--color-primary);
+}
+
+.progress-segment:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* ============ Form panel ============ */
+.form-panel {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: #fff;
+}
+
+.form-panel-header {
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-primary-soft);
+}
+
+.form-panel-header h2 {
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.form-panel-body {
+  padding: 8px 24px 4px;
+}
+
+/* Patient information: two columns of fields. */
+.question-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 24px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+/* Dental questions: one per row, separated by thin lines. */
+.question-list > .question {
+  padding: 16px 0;
+  border-bottom: 1px solid #e9eef3;
+}
+
+.question-list > .question:last-child {
+  border-bottom: none;
+}
+
+/* A fieldset puts its padding below the legend, so the legend gets the top space instead. */
+.question-list > fieldset.question {
+  padding-top: 0;
+}
+
+.question-list > fieldset.question > legend {
+  padding-top: 16px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  padding: 14px 24px;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-bg-subtle);
+}
+
+/* ============ Questions & inputs ============ */
+.question {
+  margin: 0;
+  padding: 0;
+  border: none;
+  min-width: 0;
+}
+
+.question legend {
+  padding: 0;
+}
+
+.field-label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  font-size: 0.93rem;
+}
+
+.question-number {
+  display: inline-block;
+  min-width: 1.6em;
+  color: var(--color-text-muted);
+}
+
+/* Follow-up (branching) questions are indented under their parent question. */
+.question-list > .question-follow-up {
+  margin-left: 1.6em;
+  padding-left: 14px;
+  border-left: 2px solid var(--color-teal);
+}
+
+.required-mark {
+  color: var(--color-error);
+}
+
+.input {
+  display: block;
+  width: 100%;
+  max-width: 480px;
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  font-size: 0.95rem;
+}
+
+.question-grid .input,
+.textarea {
+  max-width: none;
+}
+
+.input::placeholder {
+  color: #8a99a8;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: var(--focus-ring);
+}
+
+.input-invalid {
+  border-color: var(--color-error);
+}
+
+.input-invalid:focus {
+  box-shadow: 0 0 0 3px rgba(194, 59, 59, 0.18);
+}
+
+.textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.select {
+  appearance: none;
+  padding-right: 34px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%235a6b7d' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
+.field-hint {
+  margin-top: 6px;
+  font-size: 0.83rem;
+  color: var(--color-text-muted);
+}
+
+.field-error {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: var(--color-error);
+}
+
+/* Radio buttons and checkboxes */
+.choice-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.choice-list-inline {
+  flex-direction: row;
+  gap: 28px;
+}
+
+.choice-list-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 240px));
+  gap: 6px 24px;
+}
+
+.choice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.choice input {
+  flex-shrink: 0;
+  width: 17px;
+  height: 17px;
+  margin: 0;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+/* Read-only question (e.g. pregnancy for males): the chosen answer stays readable. */
+.choice-locked,
+.choice-locked input {
+  cursor: not-allowed;
+}
+
+.choice-locked:has(input:not(:checked)) {
+  color: var(--color-text-muted);
+}
+
+/* Line up the answers of numbered questions with the question text. */
+.question-list > .question-numbered > :not(legend, label) {
+  margin-left: 1.6em;
+}
+
+.question-list > .question-numbered > .input {
+  width: calc(100% - 1.6em);
+}
+
+/* Heading for a group of follow-up questions, e.g. "Toothache". */
+.question-group-title {
+  margin: 18px 0 0;
+  padding: 8px 12px;
+  border-left: 3px solid var(--color-teal);
+  background: var(--color-teal-soft);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+/* "Other (please specify)" box sits right under its choices. */
+.question-list > .question-other {
+  padding-top: 0;
+  border-top: none;
+}
+
+.question-list > .question:has(+ .question-other) {
+  border-bottom: none;
+}
+
+/* 0-10 slider */
+.scale {
+  max-width: 480px;
+}
+
+.scale-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.scale-input {
+  flex: 1;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+/* Greyed out until the patient chooses a value. */
+.scale-input-empty {
+  opacity: 0.45;
+}
+
+.scale-value {
+  min-width: 2.2em;
+  padding: 4px 0;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.scale-labels {
+  display: flex;
+  justify-content: space-between;
+  margin: 4px calc(2.2em + 14px) 4px 0;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+/* Consent statements */
+.question-consent .field-label {
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.consent-choice {
+  font-weight: 600;
+}
+
+/* ============ Summary ============ */
+.summary-section {
+  margin-bottom: 16px;
+}
+
+.summary-list {
+  margin: 0;
+}
+
+.summary-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  border-bottom: 1px solid #e9eef3;
+}
+
+.summary-row:last-child {
+  border-bottom: none;
+}
+
+.summary-row dt,
+.summary-row dd {
+  margin: 0;
+  padding: 10px 24px;
+  font-size: 0.93rem;
+}
+
+.summary-row dt {
+  color: var(--color-text-muted);
+}
+
+.summary-row dd {
+  border-left: 1px solid #e9eef3;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.summary-row-follow-up dt {
+  padding-left: calc(24px + 1.6em);
+}
+
+/* Patient information: label/value pairs in two columns. */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.summary-grid .summary-row {
+  grid-template-columns: 45% 55%;
+}
+
+.summary-grid .summary-row dt,
+.summary-grid .summary-row dd {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.summary-grid .summary-row:nth-child(odd) dt {
+  padding-left: 24px;
+}
+
+.summary-grid .summary-row:nth-child(odd) {
+  border-right: 1px solid #e9eef3;
+}
+
+.summary-grid .summary-row:nth-last-child(2):nth-child(odd) {
+  border-bottom: none;
+}
+
+.summary-group-title {
+  grid-column: 1 / -1;
+  padding: 8px 24px;
+  border-bottom: 1px solid #e9eef3;
+  border-left: 3px solid var(--color-teal);
+  background: #f3faf9;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.summary-none {
+  padding: 12px 24px;
+  font-size: 0.93rem;
+  color: var(--color-text-muted);
+}
+
+.summary-empty {
+  color: #8a99a8;
+  font-weight: 400 !important;
+}
+
+.summary-actions {
+  border: none;
+  background: none;
+  padding: 8px 0 0;
+}
+
+/* ============ Responsive ============ */
+@media (max-width: 640px) {
+  .app-content {
+    padding: 20px 12px 36px;
+  }
+
+  .form-panel-header,
+  .form-panel-body,
+  .form-actions {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .question-grid,
+  .summary-grid,
+  .choice-list-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-grid .summary-row:nth-child(odd) {
+    border-right: none;
+  }
+
+  .summary-grid .summary-row:nth-last-child(2):nth-child(odd) {
+    border-bottom: 1px solid #e9eef3;
+  }
+
+  .summary-row,
+  .summary-grid .summary-row {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-row dt {
+    padding: 10px 16px 0;
+  }
+
+  .summary-row dd {
+    padding: 2px 16px 10px;
+    border-left: none;
+  }
+
+  .summary-group-title {
+    padding-left: 16px;
+  }
+
+  .summary-row-follow-up dt,
+  .summary-row-follow-up dd {
+    padding-left: calc(16px + 1.6em);
+  }
+
+  .summary-grid .summary-row:nth-child(odd) dt {
+    padding-left: 16px;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .form-actions .button {
+    width: 100%;
+  }
+}

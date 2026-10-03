@@ -1,0 +1,116 @@
+/* Fonts are stored in public/fonts (no Google Fonts request). */
+@font-face {
+  font-family: 'Source Sans 3';
+  src: url('/fonts/source-sans-3.woff2') format('woff2');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Source Serif 4';
+  src: url('/fonts/source-serif-4.woff2') format('woff2');
+  font-weight: 500 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Design tokens: change colors, fonts, radii and shadows here. */
+:root {
+  --color-primary: #2272c3;
+  --color-primary-hover: #1a5ea4;
+  --color-primary-soft: #e9f2fb;
+  --color-teal: #139488;
+  --color-teal-soft: #e4f5f3;
+
+  --color-bg: #ffffff;
+  --color-bg-subtle: #f4f7fa;
+  --color-border: #d9e2ea;
+  --color-border-strong: #b8c6d3;
+
+  --color-text: #1a2b3c;
+  --color-text-muted: #5a6b7d;
+
+  --color-error: #c23b3b;
+  --color-error-soft: #fdf1f1;
+  --color-success: #1f8f5a;
+  --color-success-soft: #eaf7f0;
+
+  --radius-sm: 4px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+
+  --shadow-sm: 0 1px 2px rgba(16, 42, 67, 0.06);
+  --focus-ring: 0 0 0 3px rgba(34, 114, 195, 0.25);
+
+  /* Body text: humanist sans. Headings: serif, for a printed clinic-form feel. */
+  --font-sans: 'Source Sans 3', 'Segoe UI', Arial, sans-serif;
+  --font-heading: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+
+  font-family: var(--font-sans);
+  /* Source Sans is slightly small for its size, so the base is 17px. */
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--color-text);
+  background: var(--color-bg);
+  color-scheme: light;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: var(--color-bg);
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+h1,
+h2,
+h3 {
+  color: var(--color-text);
+  line-height: 1.25;
+}
+
+h1,
+h2 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* Hides text visually but keeps it available to screen readers. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
