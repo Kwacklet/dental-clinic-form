@@ -24,7 +24,6 @@ function consent(id: string, label: string): Question {
   return { id, label, type: 'consent', required: true }
 }
 
-// Adds a "please specify" text box that appears when "Other" is chosen.
 function withOther(question: Question): Question[] {
   const otherId = `${question.id}Other`
   return [
@@ -41,7 +40,6 @@ function withOther(question: Question): Question[] {
   ]
 }
 
-// Follow-up questions shown under a heading when that visit reason is ticked.
 function reasonFollowUps(reason: string, title: string, questions: (Question | Question[])[]): Question[] {
   return questions.flat().map((question) => {
     if (question.isOtherText) return { ...question, group: title }

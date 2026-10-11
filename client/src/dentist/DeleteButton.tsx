@@ -6,7 +6,6 @@ interface DeleteButtonProps {
   small?: boolean
 }
 
-// "Delete" button that asks for confirmation before calling onDelete.
 function DeleteButton({ patientName, onDelete, small = false }: DeleteButtonProps) {
   const [confirming, setConfirming] = useState(false)
   const [deleting, setDeleting] = useState(false)

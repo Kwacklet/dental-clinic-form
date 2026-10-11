@@ -9,7 +9,6 @@ export function getAssessments() {
   return request(api.get<Assessment[]>('/assessments'), 'Could not load the assessments.')
 }
 
-// Resolves to null when the assessment does not exist (404).
 export function getAssessment(id: string) {
   const call = api
     .get<Assessment>(`/assessments/${id}`, { validateStatus: (status) => status === 200 || status === 404 })

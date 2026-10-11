@@ -1,4 +1,3 @@
-/* Fonts are stored in public/fonts (no Google Fonts request). */
 @font-face {
   font-family: 'Source Sans 3';
   src: url('/fonts/source-sans-3.woff2') format('woff2');
@@ -15,7 +14,6 @@
   font-display: swap;
 }
 
-/* Design tokens: change colors, fonts, radii and shadows here. */
 :root {
   --color-primary: #2272c3;
   --color-primary-hover: #1a5ea4;
@@ -43,12 +41,10 @@
   --shadow-sm: 0 1px 2px rgba(16, 42, 67, 0.06);
   --focus-ring: 0 0 0 3px rgba(34, 114, 195, 0.25);
 
-  /* Body text: humanist sans. Headings: serif, for a printed clinic-form feel. */
   --font-sans: 'Source Sans 3', 'Segoe UI', Arial, sans-serif;
   --font-heading: 'Source Serif 4', Georgia, 'Times New Roman', serif;
 
   font-family: var(--font-sans);
-  /* Source Sans is slightly small for its size, so the base is 17px. */
   font-size: 17px;
   line-height: 1.5;
   color: var(--color-text);
@@ -102,7 +98,6 @@ button {
   cursor: pointer;
 }
 
-/* Hides text visually but keeps it available to screen readers. */
 .visually-hidden {
   position: absolute;
   width: 1px;

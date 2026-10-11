@@ -18,13 +18,11 @@ const NAV_ITEMS = [
   { page: 'settings', label: 'Settings' },
 ]
 
-// Dentist / form owner area, shown at /dentist. Requires a login.
 function DentistPanel({ pathname }: { pathname: string }) {
   const { user, checking } = useAuth()
 
   if (checking) return <p className="dentist-loading-page">Loading…</p>
   if (!user) return <DentistLogin />
-  // `key` starts fresh if a different account logs in.
   return <PanelLayout key={user.id} email={user.email} pathname={pathname} />
 }
 
@@ -34,7 +32,6 @@ function PanelLayout({ email, pathname }: { email: string; pathname: string }) {
   const settings = loadedSettings.data ?? formSettings
   const [menuOpen, setMenuOpen] = useState(false)
 
-  // '/dentist/assessments/12' -> page 'assessments', id '12'
   const [, , page = '', id] = pathname.replace(/\/+$/, '').split('/')
 
   function renderPage() {
@@ -42,7 +39,6 @@ function PanelLayout({ email, pathname }: { email: string; pathname: string }) {
       case '':
         return <DashboardPage dentistName={settings.dentistName} />
       case 'assessments':
-        // `key` gives each assessment a fresh detail page.
         return id ? <AssessmentDetailPage key={id} assessmentId={id} /> : <AssessmentsPage />
       case 'settings':
         return loadedSettings.loading ? (

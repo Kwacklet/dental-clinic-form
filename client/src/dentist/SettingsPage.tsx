@@ -14,8 +14,6 @@ interface SettingsPageProps {
   onSaved: (settings: Settings) => void
 }
 
-// Clinic settings, saved in the database. The form title and clinic name
-// are also shown on the patient form.
 function SettingsPage({ settings, onSaved }: SettingsPageProps) {
   const [values, setValues] = useState(settings)
   const [errors, setErrors] = useState<Partial<Record<keyof Settings, string>>>({})

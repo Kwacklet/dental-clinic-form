@@ -19,7 +19,6 @@ function parseAnswers(payload) {
   }
 }
 
-// Database row -> the shape the Dentist Panel shows.
 function toAssessment(row) {
   const answers = parseAnswers(row.all_answers_payload);
   return {
@@ -37,7 +36,6 @@ function toAssessment(row) {
   };
 }
 
-// Route ids must be positive whole numbers.
 function parseId(value) {
   const id = Number(value);
   return Number.isInteger(id) && id > 0 ? id : null;
@@ -46,13 +44,11 @@ function parseId(value) {
 const optional = (value) => (value === undefined || value === '' ? null : value);
 const toScale = (value) => (value === undefined || value === null || value === '' ? null : Number(value));
 
-// GET /api/assessments
 export async function listAssessments(req, res) {
   const [rows] = await pool.query(`${SELECT_ASSESSMENTS} ORDER BY a.submitted_at DESC, a.id DESC`);
   res.json(rows.map(toAssessment));
 }
 
-// GET /api/assessments/:id
 export async function getAssessment(req, res) {
   const id = parseId(req.params.id);
   if (!id) return res.status(400).json({ error: 'The id must be a positive whole number.' });
@@ -62,7 +58,6 @@ export async function getAssessment(req, res) {
   res.json(toAssessment(rows[0]));
 }
 
-// POST /api/assessments  { answers }
 export async function createAssessment(req, res) {
   const answers = req.body?.answers;
   const problem = validateAssessment(answers);
@@ -117,7 +112,6 @@ export async function createAssessment(req, res) {
   }
 }
 
-// PATCH /api/assessments/:id/status  { status }
 export async function updateAssessmentStatus(req, res) {
   const id = parseId(req.params.id);
   if (!id) return res.status(400).json({ error: 'The id must be a positive whole number.' });
@@ -131,8 +125,6 @@ export async function updateAssessmentStatus(req, res) {
   res.json({ id, status });
 }
 
-// DELETE /api/assessments/:id
-// Also deletes the patient if they have no other assessments.
 export async function deleteAssessment(req, res) {
   const id = parseId(req.params.id);
   if (!id) return res.status(400).json({ error: 'The id must be a positive whole number.' });

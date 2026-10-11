@@ -1,5 +1,3 @@
-// Server-side checks for a submitted assessment. The patient form checks the
-// same things, but the server never trusts the client.
 const NAME_PATTERN = /^[A-Za-zÀ-ÿ' .-]+$/;
 const PHONE_PATTERN = /^\d{7,15}$/;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -29,7 +27,6 @@ function isRealPastDate(value) {
   return isReal && year >= 1900 && date <= new Date();
 }
 
-// Returns { field, message } for the first problem, or null if valid.
 export function validateAssessment(answers) {
   if (!answers || typeof answers !== 'object' || Array.isArray(answers)) {
     return { field: 'answers', message: 'The request must include an "answers" object.' };

@@ -21,15 +21,12 @@ app.use(cors({ origin: config.corsOrigins }));
 app.use(express.json());
 app.use(logger);
 
-// Login for the Dentist Panel
 app.post('/api/auth/login', login);
 app.get('/api/auth/me', requireAuth, getCurrentUser);
 
-// Public: used by the patient form
 app.get('/api/settings', getSettings);
 app.post('/api/assessments', createAssessment);
 
-// Dentist Panel only
 app.put('/api/settings', requireAuth, updateSettings);
 app.get('/api/assessments', requireAuth, listAssessments);
 app.get('/api/assessments/:id', requireAuth, getAssessment);

@@ -8,7 +8,6 @@ const TOKEN_LIFETIME = '12h';
 const MAX_FAILED_ATTEMPTS = 5;
 const LOCKOUT_MINUTES = 15;
 
-// email -> { count, lockedUntil }. Slows down password guessing.
 const failedLogins = new Map();
 
 function isLockedOut(email) {
@@ -26,7 +25,6 @@ function recordFailure(email) {
   failedLogins.set(email, entry);
 }
 
-// POST /api/auth/login  { email, password } -> { token, user }
 export async function login(req, res) {
   const email = typeof req.body?.email === 'string' ? req.body.email.trim().toLowerCase() : '';
   const password = typeof req.body?.password === 'string' ? req.body.password : '';
@@ -53,7 +51,6 @@ export async function login(req, res) {
   res.json({ token, user: toPublicUser(user) });
 }
 
-// GET /api/auth/me -> { user }
 export function getCurrentUser(req, res) {
   res.json({ user: req.user });
 }

@@ -51,7 +51,6 @@ function AssessmentsPage() {
           {assessments.length === 0 ? (
             <p className="summary-none">No assessments yet.</p>
           ) : (
-            // On small screens each row becomes a card; data-label supplies the column name.
             <table className="dentist-table">
               <thead>
                 <tr>

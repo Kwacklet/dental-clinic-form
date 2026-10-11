@@ -8,7 +8,6 @@ import type { Answers, AnswerValue, Question } from '../types'
 
 type Errors = Record<string, string>
 
-// Validates the visible questions in a list. Returns { questionId: message }.
 function validateQuestions(questions: Question[], answers: Answers): Errors {
   const errors: Errors = {}
   questions.forEach((question) => {
@@ -33,8 +32,6 @@ interface QuestionnaireProps {
   onSubmit: (answers: Answers) => void
 }
 
-// The patient form, one section per step. All answers live in one state
-// object (`answers`, owned by PatientApp) and change through one handleChange.
 function Questionnaire({ title, answers, onAnswersChange, onSubmit }: QuestionnaireProps) {
   const [stepIndex, setStepIndex] = useState(0)
   const [errors, setErrors] = useState<Errors>({})
@@ -42,7 +39,6 @@ function Questionnaire({ title, answers, onAnswersChange, onSubmit }: Questionna
   const section = sections[stepIndex]
   const isLastStep = stepIndex === sections.length - 1
   const visibleQuestions = section.questions.filter((q) => isQuestionVisible(q, answers, allQuestions))
-  // Main questions are numbered 1, 2, 3... Follow-up questions are not numbered.
   const mainQuestions = section.questions.filter((q) => !q.showIf)
 
   function goToStep(index: number) {
@@ -51,8 +47,6 @@ function Questionnaire({ title, answers, onAnswersChange, onSubmit }: Questionna
   }
 
   function handleChange(questionId: string, value: AnswerValue) {
-    // Update the answer, drop answers whose questions just became hidden,
-    // then refresh automatic answers (e.g. age from date of birth).
     const nextAnswers = applyCalculatedAnswers(
       removeHiddenAnswers({ ...answers, [questionId]: value }, allQuestions),
       allQuestions,
@@ -63,12 +57,10 @@ function Questionnaire({ title, answers, onAnswersChange, onSubmit }: Questionna
 
     setErrors((previous) => {
       const next = { ...previous }
-      // Re-check a field live once it has shown an error.
       if (next[questionId]) {
         const question = allQuestions.find((q) => q.id === questionId)
         if (question) next[questionId] = validateAnswer(question, value)
       }
-      // Clear errors for follow-up questions that are no longer shown.
       return Object.fromEntries(
         Object.entries(next).filter(([id]) => {
           const question = allQuestions.find((q) => q.id === id)
@@ -78,7 +70,6 @@ function Questionnaire({ title, answers, onAnswersChange, onSubmit }: Questionna
     })
   }
 
-  // Check a field when the patient leaves it, but don't nag about empty fields yet.
   function handleBlur(question: Question) {
     const value = answers[question.id]
     if (isEmpty(value)) return
@@ -94,7 +85,6 @@ function Questionnaire({ title, answers, onAnswersChange, onSubmit }: Questionna
     if (firstInvalid) return focusField(firstInvalid)
     if (!isLastStep) return goToStep(stepIndex + 1)
 
-    // Final check across every section before reviewing.
     const invalidIndex = sections.findIndex((s) => Object.keys(validateQuestions(s.questions, answers)).length > 0)
     if (invalidIndex >= 0) {
       setErrors(validateQuestions(sections[invalidIndex].questions, answers))
@@ -127,7 +117,6 @@ function Questionnaire({ title, answers, onAnswersChange, onSubmit }: Questionna
 
         <div className={`form-panel-body ${section.isPatientInfo ? 'question-grid' : 'question-list'}`}>
           {visibleQuestions.map((question, index) => {
-            // Show a heading (e.g. "Toothache") before the first question of each follow-up group.
             const startsGroup = question.group && question.group !== visibleQuestions[index - 1]?.group
             return (
               <Fragment key={question.id}>

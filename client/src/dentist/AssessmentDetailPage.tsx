@@ -13,8 +13,6 @@ const backLink = (
   </Link>
 )
 
-// Read-only view of one submitted assessment, with buttons to mark it
-// reviewed and to delete it.
 function AssessmentDetailPage({ assessmentId }: { assessmentId: string }) {
   const { loading, data: assessment, error, setData } = useLoad(getAssessment, assessmentId)
   const [deleted, setDeleted] = useState(false)
@@ -122,7 +120,6 @@ function AssessmentDetailPage({ assessmentId }: { assessmentId: string }) {
         </p>
       )}
 
-      {/* Same table the patient reviews before sending. Skipped follow-up questions are not shown. */}
       <div className="summary">
         <AssessmentAnswers answers={current.answers} />
       </div>

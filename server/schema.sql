@@ -1,15 +1,9 @@
--- Dental Assessment Form: database setup.
--- Run once:  mysql -u root < server/schema.sql   (or phpMyAdmin > Import)
--- Then set a Dentist Panel password:  cd server && npm run set-password -- dentist@example.com
--- All sample data below is fictional.
-
-SET NAMES utf8mb4; -- read this file as UTF-8 (keeps characters such as "–" intact)
+SET NAMES utf8mb4;
 
 CREATE DATABASE IF NOT EXISTS dental_clinic_db
   CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE dental_clinic_db;
 
--- Clinic name, dentist name and form title (one row, edited on the Settings page).
 CREATE TABLE clinic_settings (
   id INT(11) NOT NULL AUTO_INCREMENT,
   dentist_name VARCHAR(100) NOT NULL DEFAULT 'Dr. Sample Dentist',
@@ -19,7 +13,6 @@ CREATE TABLE clinic_settings (
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dentist Panel accounts. password_hash is a bcrypt hash (set with npm run set-password).
 CREATE TABLE user_profiles (
   id INT(11) NOT NULL AUTO_INCREMENT,
   first_name VARCHAR(50) NOT NULL,
@@ -37,7 +30,6 @@ CREATE TABLE user_profiles (
   KEY idx_user_role (role)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- One row per patient form submission.
 CREATE TABLE patients (
   id INT(11) NOT NULL AUTO_INCREMENT,
   last_name VARCHAR(60) NOT NULL,
@@ -61,8 +53,6 @@ CREATE TABLE patients (
   KEY idx_patient_last_first (last_name, first_name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- The questionnaire answers. Key answers have their own columns; the full set
--- is kept in all_answers_payload (JSON). Deleting a patient deletes their assessments.
 CREATE TABLE dental_assessments (
   id INT(11) NOT NULL AUTO_INCREMENT,
   patient_id INT(11) DEFAULT NULL,
@@ -90,12 +80,9 @@ CREATE TABLE dental_assessments (
   CONSTRAINT dental_assessments_ibfk_1 FOREIGN KEY (patient_id) REFERENCES patients (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ---------- Sample data (fictional) ----------
-
 INSERT INTO clinic_settings (dentist_name, clinic_name, form_title) VALUES
   ('Dr. Sample Dentist', 'Meg''s Clinic', 'Dental Assessment Form');
 
--- No passwords: set one with  npm run set-password -- dentist@example.com
 INSERT INTO user_profiles (first_name, last_name, email, role, status) VALUES
   ('Sample', 'Dentist', 'dentist@example.com', 'dentist', 'active'),
   ('Sample', 'Staff', 'staff@example.com', 'staff', 'active');

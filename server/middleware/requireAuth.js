@@ -12,8 +12,6 @@ export const toPublicUser = (user) => ({
   role: user.role
 });
 
-// Protects Dentist Panel routes. Needs "Authorization: Bearer <token>" from
-// POST /api/auth/login, for an account that is still active.
 export async function requireAuth(req, res, next) {
   const token = req.get('Authorization')?.match(/^Bearer (.+)$/)?.[1];
   if (!token) return res.status(401).json({ error: 'Please log in.' });

@@ -11,23 +11,19 @@ import type { Answers } from './types'
 
 type Screen = 'questionnaire' | 'review' | 'sent'
 
-// A fresh form, with any automatic answers filled in.
 const createInitialAnswers = () => applyCalculatedAnswers({}, allQuestions)
 
-// Patient flow: Questionnaire -> Review your answers -> Sent (thank you).
-// Answers are only saved when the patient presses "Send to clinic".
 function PatientApp() {
   const [screen, setScreen] = useState<Screen>('questionnaire')
   const [answers, setAnswers] = useState<Answers>(createInitialAnswers)
   const [sending, setSending] = useState(false)
   const [sendError, setSendError] = useState('')
-  const [settings, setSettings] = useState(formSettings) // defaults until the real ones load
+  const [settings, setSettings] = useState(formSettings)
 
-  // Load the form title and clinic name set by the dentist.
   useEffect(() => {
     getSettings()
       .then(setSettings)
-      .catch(() => {}) // keep the defaults if they can't be loaded
+      .catch(() => {})
   }, [])
 
   function showScreen(name: Screen) {
@@ -46,10 +42,9 @@ function PatientApp() {
     setSendError('')
     try {
       await submitAssessment(answers)
-      setAnswers(createInitialAnswers()) // reset the form after a successful save
+      setAnswers(createInitialAnswers())
       showScreen('sent')
     } catch (error) {
-      // Answers are kept, so the patient can simply try again.
       setSendError((error as Error).message)
     } finally {
       setSending(false)

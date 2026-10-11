@@ -13,12 +13,10 @@ export async function readSettings() {
   return { dentistName: rows[0].dentist_name, clinicName: rows[0].clinic_name, formTitle: rows[0].form_title };
 }
 
-// GET /api/settings
 export async function getSettings(req, res) {
   res.json(await readSettings());
 }
 
-// PUT /api/settings  { dentistName, clinicName, formTitle }
 export async function updateSettings(req, res) {
   const values = {};
   for (const [key, max] of Object.entries(MAX_LENGTHS)) {

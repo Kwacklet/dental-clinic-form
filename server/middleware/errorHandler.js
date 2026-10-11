@@ -2,7 +2,6 @@ export function notFound(req, res) {
   res.status(404).json({ error: `No route for ${req.method} ${req.originalUrl}.` });
 }
 
-// Express 5 sends errors thrown in async handlers here.
 export function errorHandler(err, req, res, next) {
   if (res.headersSent) return next(err);
   if (err.type === 'entity.parse.failed') {

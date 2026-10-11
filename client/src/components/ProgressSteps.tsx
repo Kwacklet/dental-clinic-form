@@ -6,8 +6,6 @@ interface ProgressStepsProps {
   onStepClick: (index: number) => void
 }
 
-// Progress indicator above the form: "Section 3 of 10" plus one bar segment
-// per section. Earlier sections can be clicked to go back to them.
 function ProgressSteps({ sections, currentIndex, onStepClick }: ProgressStepsProps) {
   const nextSection = sections[currentIndex + 1]
 

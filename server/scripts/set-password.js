@@ -1,5 +1,3 @@
-// Sets or resets a Dentist Panel password.
-// Usage: npm run set-password -- meg@megsclinic.com
 import readline from 'node:readline';
 import bcrypt from 'bcryptjs';
 import { pool } from '../db.js';

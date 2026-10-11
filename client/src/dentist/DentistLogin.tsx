@@ -3,8 +3,6 @@ import ToothIcon from '../components/ToothIcon'
 import { useAuth } from '../context/auth'
 import { isEmpty, validateEmail } from '../utils/validation'
 
-// Login screen for the Dentist Panel (there is no sign-up page; accounts are
-// created in the database and given a password with `npm run set-password`).
 function DentistLogin() {
   const { logIn } = useAuth()
   const [email, setEmail] = useState('')
@@ -26,7 +24,6 @@ function DentistLogin() {
     setLoggingIn(true)
     try {
       await logIn(email.trim(), password)
-      // DentistPanel sees the logged-in user and shows the panel.
     } catch (error) {
       setLoginError((error as Error).message)
       setLoggingIn(false)

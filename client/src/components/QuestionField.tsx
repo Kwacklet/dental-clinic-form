@@ -15,8 +15,6 @@ interface QuestionFieldProps {
 
 type TextInputEvent = ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
 
-// Renders a single questionnaire question based on its `type`.
-// `locked` makes a radio question read-only (see `lockedIf` in questions.ts).
 function QuestionField({ question, value, error, onChange, onBlur, isFollowUp, number, locked }: QuestionFieldProps) {
   const { id, label, type, required, options = [], placeholder, maxLength } = question
   const helpText = locked ? question.lockedText : question.helpText
@@ -28,13 +26,11 @@ function QuestionField({ question, value, error, onChange, onBlur, isFollowUp, n
   function handleCheckboxChange(option: string, checked: boolean) {
     const selected = Array.isArray(value) ? value : []
     const next = checked ? [...selected, option] : selected.filter((item) => item !== option)
-    // Keep the selection order the same as the options list.
     onChange(id, options.filter((item) => next.includes(item)))
   }
 
   function handleTextChange(event: TextInputEvent) {
     let newValue = event.target.value
-    // Number and phone fields only accept digits.
     if (type === 'number' || type === 'tel') newValue = newValue.replace(/\D/g, '')
     onChange(id, newValue)
   }
@@ -99,7 +95,6 @@ function QuestionField({ question, value, error, onChange, onBlur, isFollowUp, n
         )
       case 'radio':
         return (
-          // Short Yes/No lists sit on one line; long lists use two columns.
           <div className={`choice-list ${options.length <= 3 ? 'choice-list-inline' : 'choice-list-grid'}`}>
             {options.map((option) => (
               <label key={option} className={`choice ${locked ? 'choice-locked' : ''}`}>
@@ -149,8 +144,6 @@ function QuestionField({ question, value, error, onChange, onBlur, isFollowUp, n
           </label>
         )
       case 'scale': {
-        // 0-10 slider. It starts unanswered; the answer is set when the patient
-        // moves or clicks the slider (clicking also counts if they choose 0).
         const hasValue = textValue !== ''
         const setFromEvent = (event: SyntheticEvent<HTMLInputElement>) => onChange(id, event.currentTarget.value)
         return (
@@ -192,7 +185,6 @@ function QuestionField({ question, value, error, onChange, onBlur, isFollowUp, n
         )
       }
       default:
-        // text, name, email, tel (digits only), number (digits only)
         return (
           <input
             {...commonProps}
@@ -231,7 +223,6 @@ function QuestionField({ question, value, error, onChange, onBlur, isFollowUp, n
     .filter(Boolean)
     .join(' ')
 
-  // Radio / checkbox groups use fieldset + legend for accessibility.
   if (isGroup) {
     return (
       <fieldset className={className} data-field={id} aria-describedby={describedBy}>

@@ -15,7 +15,6 @@ export type QuestionType =
   | 'scale'
   | 'consent'
 
-// Branching: the question only appears when this rule matches.
 export interface ShowIfRule {
   questionId: string
   value?: string | string[]

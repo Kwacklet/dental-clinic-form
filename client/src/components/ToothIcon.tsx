@@ -1,4 +1,3 @@
-// Simple inline tooth icon, so no icon library is needed.
 function ToothIcon({ size = 24 }: { size?: number }) {
   return (
     <svg

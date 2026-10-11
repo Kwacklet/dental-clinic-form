@@ -1,7 +1,3 @@
-/*
- * Validation helpers. Each validator returns an error message, or '' when
- * the value is valid. The server repeats these checks (server/validation.js).
- */
 import { getTodayISO, parseISODate } from './dates'
 import type { AnswerValue, Question } from '../types'
 
@@ -20,9 +16,7 @@ export function validateEmail(email: string) {
   return ''
 }
 
-// Validates one questionnaire answer based on the question's settings.
 export function validateAnswer(question: Question, value: AnswerValue): string {
-  // Consent boxes must be ticked (their value is true or false).
   if (question.type === 'consent') {
     return question.required && value !== true ? 'Please tick this box to continue.' : ''
   }
@@ -34,7 +28,6 @@ export function validateAnswer(question: Question, value: AnswerValue): string {
     return isChoice ? 'Please select an option.' : 'This field is required.'
   }
 
-  // e.g. "None" cannot be ticked together with a medical condition.
   if (Array.isArray(value)) {
     const { exclusiveOption } = question
     if (exclusiveOption && value.includes(exclusiveOption) && value.length > 1) {

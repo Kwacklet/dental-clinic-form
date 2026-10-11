@@ -5,7 +5,6 @@ import { formatDate } from '../utils/dates'
 import { isEmpty } from '../utils/validation'
 import type { Answers, Question } from '../types'
 
-// The answer as text, e.g. "Other: grinding" or "4 out of 10". Null = not shown.
 function formatAnswer(question: Question, answers: Answers): string | null {
   const value = answers[question.id]
   if (question.type === 'consent') return value === true ? 'Agreed' : null
@@ -13,13 +12,11 @@ function formatAnswer(question: Question, answers: Answers): string | null {
   if (question.type === 'date') return formatDate(String(value))
   if (question.type === 'scale') return `${value} out of ${question.max}`
 
-  // Show "Other" together with what the patient typed.
   const otherText = question.otherId ? answers[question.otherId] : ''
   const withOther = (answer: string) => (answer === 'Other' && otherText ? `Other: ${otherText}` : answer)
   return Array.isArray(value) ? value.map(withOther).join(', ') : withOther(String(value))
 }
 
-// Read-only table of answers, used on the review screen and the Dentist Panel.
 function AssessmentAnswers({ answers }: { answers: Answers }) {
   return (
     <>
@@ -43,7 +40,6 @@ function AssessmentAnswers({ answers }: { answers: Answers }) {
               <dl className={`summary-list ${section.isPatientInfo ? 'summary-grid' : ''}`}>
                 {rows.map(({ question, answer }, index) => {
                   const number = !section.isPatientInfo && !question.showIf ? mainQuestions.indexOf(question) + 1 : null
-                  // Heading before the first answer of each group, e.g. "Toothache Details".
                   const startsGroup = question.group && question.group !== rows[index - 1]?.question.group
                   const isFollowUp = question.showIf && !question.isGroupItem
                   return (

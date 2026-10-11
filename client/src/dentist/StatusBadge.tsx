@@ -1,6 +1,5 @@
 import type { AssessmentStatus } from '../types'
 
-// Small colored label for an assessment's status ('New' or 'Reviewed').
 function StatusBadge({ status }: { status: AssessmentStatus }) {
   return <span className={`status-badge status-${status.toLowerCase()}`}>{status}</span>
 }

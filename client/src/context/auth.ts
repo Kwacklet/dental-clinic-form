@@ -3,7 +3,7 @@ import type { User } from '../types'
 
 export interface AuthState {
   user: User | null
-  checking: boolean // true while a saved login is being checked with the server
+  checking: boolean
   logIn: (email: string, password: string) => Promise<void>
   logOut: () => void
 }

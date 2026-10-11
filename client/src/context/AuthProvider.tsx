@@ -4,7 +4,6 @@ import { getToken, setToken, setUnauthorizedHandler } from '../api/axios'
 import { AuthContext } from './auth'
 import type { User } from '../types'
 
-// Keeps track of who is logged in to the Dentist Panel.
 function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [checking, setChecking] = useState(() => getToken() !== null)
@@ -13,7 +12,6 @@ function AuthProvider({ children }: { children: ReactNode }) {
     setUnauthorizedHandler(() => setUser(null))
     if (!getToken()) return
 
-    // A login saved from an earlier visit: check it is still valid.
     let active = true
     getCurrentUser()
       .then((data) => active && setUser(data.user))

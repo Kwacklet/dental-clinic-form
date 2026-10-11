@@ -1,4 +1,3 @@
-/* ============ App shell ============ */
 .app-shell {
   display: flex;
   flex-direction: column;
@@ -56,7 +55,6 @@
   color: var(--color-text-muted);
 }
 
-/* ============ Notices ============ */
 .notice {
   margin-bottom: 20px;
   padding: 10px 14px;
@@ -87,7 +85,6 @@
   color: #17603f;
 }
 
-/* ============ Buttons ============ */
 .button {
   min-height: 40px;
   padding: 8px 20px;
@@ -143,7 +140,6 @@
   margin-left: auto;
 }
 
-/* ============ Progress indicator ============ */
 .progress {
   margin-bottom: 12px;
 }
@@ -205,7 +201,6 @@
   box-shadow: var(--focus-ring);
 }
 
-/* ============ Form panel ============ */
 .form-panel {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
@@ -227,7 +222,6 @@
   padding: 8px 24px 4px;
 }
 
-/* Patient information: two columns of fields. */
 .question-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -236,7 +230,6 @@
   padding-bottom: 20px;
 }
 
-/* Dental questions: one per row, separated by thin lines. */
 .question-list > .question {
   padding: 16px 0;
   border-bottom: 1px solid #e9eef3;
@@ -246,7 +239,6 @@
   border-bottom: none;
 }
 
-/* A fieldset puts its padding below the legend, so the legend gets the top space instead. */
 .question-list > fieldset.question {
   padding-top: 0;
 }
@@ -263,7 +255,6 @@
   background: var(--color-bg-subtle);
 }
 
-/* ============ Questions & inputs ============ */
 .question {
   margin: 0;
   padding: 0;
@@ -288,7 +279,6 @@
   color: var(--color-text-muted);
 }
 
-/* Follow-up (branching) questions are indented under their parent question. */
 .question-list > .question-follow-up {
   margin-left: 1.6em;
   padding-left: 14px;
@@ -359,7 +349,6 @@
   color: var(--color-error);
 }
 
-/* Radio buttons and checkboxes */
 .choice-list {
   display: flex;
   flex-direction: column;
@@ -394,7 +383,6 @@
   cursor: pointer;
 }
 
-/* Read-only question (e.g. pregnancy for males): the chosen answer stays readable. */
 .choice-locked,
 .choice-locked input {
   cursor: not-allowed;
@@ -404,7 +392,6 @@
   color: var(--color-text-muted);
 }
 
-/* Line up the answers of numbered questions with the question text. */
 .question-list > .question-numbered > :not(legend, label) {
   margin-left: 1.6em;
 }
@@ -413,7 +400,6 @@
   width: calc(100% - 1.6em);
 }
 
-/* Heading for a group of follow-up questions, e.g. "Toothache". */
 .question-group-title {
   margin: 18px 0 0;
   padding: 8px 12px;
@@ -423,7 +409,6 @@
   font-weight: 600;
 }
 
-/* "Other (please specify)" box sits right under its choices. */
 .question-list > .question-other {
   padding-top: 0;
   border-top: none;
@@ -433,7 +418,6 @@
   border-bottom: none;
 }
 
-/* 0-10 slider */
 .scale {
   max-width: 480px;
 }
@@ -450,7 +434,6 @@
   cursor: pointer;
 }
 
-/* Greyed out until the patient chooses a value. */
 .scale-input-empty {
   opacity: 0.45;
 }
@@ -473,7 +456,6 @@
   color: var(--color-text-muted);
 }
 
-/* Consent statements */
 .question-consent .field-label {
   font-weight: 400;
   line-height: 1.5;
@@ -483,7 +465,6 @@
   font-weight: 600;
 }
 
-/* ============ Summary ============ */
 .summary-section {
   margin-bottom: 16px;
 }
@@ -524,7 +505,6 @@
   padding-left: calc(24px + 1.6em);
 }
 
-/* Patient information: label/value pairs in two columns. */
 .summary-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -574,7 +554,6 @@
   padding: 8px 0 0;
 }
 
-/* ============ Responsive ============ */
 @media (max-width: 640px) {
   .app-content {
     padding: 20px 12px 36px;

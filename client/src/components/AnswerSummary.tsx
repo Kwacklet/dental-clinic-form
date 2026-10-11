@@ -9,7 +9,6 @@ interface AnswerSummaryProps {
   onSend: () => void
 }
 
-// "Review your answers" screen shown before the form is sent to the clinic.
 function AnswerSummary({ answers, sending, error, onEdit, onSend }: AnswerSummaryProps) {
   return (
     <div className="summary">
