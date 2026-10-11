@@ -568,11 +568,6 @@
   color: var(--color-text-muted);
 }
 
-.summary-empty {
-  color: #8a99a8;
-  font-weight: 400 !important;
-}
-
 .summary-actions {
   border: none;
   background: none;

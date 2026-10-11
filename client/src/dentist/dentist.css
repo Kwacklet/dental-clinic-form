@@ -273,11 +273,6 @@
   font-size: 0.9rem;
 }
 
-.dentist-card-count {
-  font-size: 0.85rem;
-  color: var(--color-text-muted);
-}
-
 /* ============ Dashboard ============ */
 .stat-grid {
   display: grid;
@@ -479,43 +474,6 @@
   margin: 6px 0 0 auto;
 }
 
-/* Questionnaire table */
-.question-table-number {
-  width: 48px;
-  color: var(--color-text-muted);
-}
-
-.question-table .is-follow-up .table-primary-cell {
-  padding-left: 32px;
-  font-weight: 500;
-}
-
-.question-table-group th {
-  padding: 8px 20px;
-  border-bottom: 1px solid var(--color-border);
-  border-left: 3px solid var(--color-teal);
-  background: var(--color-teal-soft);
-  color: var(--color-text);
-  font-size: 0.85rem;
-  text-transform: none;
-  letter-spacing: 0;
-}
-
-.question-options {
-  display: block;
-  margin-top: 2px;
-  font-size: 0.8rem;
-  font-weight: 400;
-  color: var(--color-text-muted);
-}
-
-code {
-  padding: 1px 5px;
-  border-radius: 3px;
-  background: #fff;
-  font-size: 0.85em;
-}
-
 /* ============ Settings ============ */
 .settings-form {
   max-width: 560px;
@@ -655,19 +613,6 @@ code {
   .table-action-cell {
     justify-content: flex-start;
     padding-top: 8px !important;
-  }
-
-  .question-table .is-follow-up .table-primary-cell {
-    padding-left: 0;
-  }
-
-  .question-table-group {
-    display: block;
-  }
-
-  .question-table-group th {
-    display: block;
-    padding: 8px 16px;
   }
 
   .detail-header {
