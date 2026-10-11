@@ -40,5 +40,8 @@ app.listen(config.port, () => {
   console.log(`API running on http://localhost:${config.port}`);
   pool.query('SELECT 1')
     .then(() => console.log(`Connected to MySQL database: ${config.db.database}`))
-    .catch((error) => console.error('Database connection error:', error.message));
+    .catch((error) => {
+      const reason = error.code === 'ECONNREFUSED' ? 'MySQL is not running (start it in XAMPP)' : error.message || error.code;
+      console.error('Database connection error:', reason);
+    });
 });
