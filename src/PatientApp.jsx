@@ -44,7 +44,7 @@ function PatientApp() {
     setSending(true)
     setSendError('')
     try {
-      await submitAssessment(answers)
+      await submitAssessment(answers, settings)
       showScreen('sent')
     } catch (error) {
       // Answers are kept, so the patient can simply try again.
@@ -61,7 +61,7 @@ function PatientApp() {
 
   return (
     <div className="app-shell">
-      <AppHeader />
+      <AppHeader clinicName={settings.clinicName} />
       <main className="app-content">
         {screen === 'questionnaire' && (
           <Questionnaire

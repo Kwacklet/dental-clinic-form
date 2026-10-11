@@ -1,55 +1,50 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
--- Generation Time: Oct 03, 2026 at 07:12 AM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.1.25
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
+-- dental_clinic_db: table structure plus default clinic settings (no patient data).
+-- Import into an empty database named dental_clinic_db (phpMyAdmin > Import).
+-- Then create a Dentist Panel account in user_profiles and set its password:
+--   npm run set-password -- you@example.com
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
-
---
--- Database: `dental_clinic_db`
---
-
--- --------------------------------------------------------
-
---
--- Table structure for table `clinic_settings`
---
-
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+DROP TABLE IF EXISTS `auth_sessions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `auth_sessions` (
+  `token_hash` char(64) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `expires_at` datetime NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`token_hash`),
+  KEY `idx_session_user` (`user_id`),
+  KEY `idx_session_expires` (`expires_at`),
+  CONSTRAINT `auth_sessions_user_fk` FOREIGN KEY (`user_id`) REFERENCES `user_profiles` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `clinic_settings`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `clinic_settings` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `dentist_name` varchar(100) NOT NULL DEFAULT 'Dr. Sample Dentist',
   `clinic_name` varchar(100) NOT NULL DEFAULT 'Meg''s Clinic',
   `form_title` varchar(150) NOT NULL DEFAULT 'Dental Assessment Form',
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `clinic_settings`
---
-
-INSERT INTO `clinic_settings` (`id`, `dentist_name`, `clinic_name`, `form_title`, `updated_at`) VALUES
-(1, 'Dr. Sample Dentist', 'Meg\'s Clinic', 'Dental Assessment Form', '2026-09-30 14:46:56');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `dental_assessments`
---
-
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `dental_assessments`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `dental_assessments` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `patient_id` int(11) DEFAULT NULL,
   `clinic_name` varchar(100) NOT NULL DEFAULT 'Meg''s Clinic',
   `form_title` varchar(150) NOT NULL DEFAULT 'Dental Assessment Form',
@@ -67,24 +62,19 @@ CREATE TABLE `dental_assessments` (
   `consent_inform_changes` tinyint(1) NOT NULL DEFAULT 1,
   `consent_privacy` tinyint(1) NOT NULL DEFAULT 1,
   `all_answers_payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`all_answers_payload`)),
-  `submitted_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ;
-
---
--- Dumping data for table `dental_assessments`
---
-
-INSERT INTO `dental_assessments` (`id`, `patient_id`, `clinic_name`, `form_title`, `status`, `visit_reasons`, `visit_reasons_other`, `concern_description`, `toothache_pain_level`, `anxiety_level`, `has_medical_conditions`, `taking_medications`, `has_allergies`, `pregnancy`, `consent_accurate`, `consent_inform_changes`, `consent_privacy`, `all_answers_payload`, `submitted_at`) VALUES
-(1, 1, 'Meg\'s Clinic', 'Dental Assessment Form', 'New', 'Routine dental check-up', NULL, NULL, NULL, NULL, 0, 'No', 'No', 'No', 1, 1, 1, '{\"fullName\":\"Margaret Anne Fajardo\",\"preferredName\":\"Meg\",\"dateOfBirth\":\"2005-07-01\",\"age\":\"21\",\"sex\":\"Female\",\"pregnancy\":\"No\",\"mobileNumber\":\"0978654656\",\"email\":\"fajardomarga01@gmail.com\",\"address\":\"Gomburza St\",\"occupation\":\"Student\",\"emergencyContactName\":\"Uno\",\"emergencyContactNumber\":\"092764932594\",\"emergencyContactRelationship\":\"sikret\",\"visitReasons\":[\"Routine dental check-up\"],\"checkupLastVisit\":\"Less than 6 months ago\",\"checkupProblemsSince\":\"No\",\"medicalConditions\":[\"None\"],\"takingMedications\":\"No\",\"bloodThinners\":\"No\",\"boneMedication\":\"No\",\"hasAllergies\":\"No\",\"anesthesiaReaction\":\"No\",\"excessiveBleeding\":\"No\",\"fainting\":\"No\",\"antibioticPremedication\":\"No\",\"negativeExperience\":\"No\",\"consentAccurate\":true,\"consentInformChanges\":true,\"consentPrivacy\":true}', '2026-10-03 05:08:39');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `inventory_records`
---
-
+  `submitted_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `patient_id` (`patient_id`),
+  KEY `idx_assessment_status` (`status`),
+  KEY `idx_assessment_date` (`submitted_at`),
+  CONSTRAINT `dental_assessments_ibfk_1` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `inventory_records`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `inventory_records` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `sku_code` varchar(50) NOT NULL,
   `item_name` varchar(100) NOT NULL,
   `category` varchar(50) NOT NULL,
@@ -95,30 +85,25 @@ CREATE TABLE `inventory_records` (
   `expiration_date` date DEFAULT NULL,
   `status` enum('in_stock','low_stock','out_of_stock','discontinued') NOT NULL DEFAULT 'in_stock',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ;
-
---
--- Dumping data for table `inventory_records`
---
-
-INSERT INTO `inventory_records` (`id`, `sku_code`, `item_name`, `category`, `quantity_in_stock`, `minimum_required_stock`, `unit_price`, `supplier_name`, `expiration_date`, `status`, `created_at`, `updated_at`) VALUES
-(1, 'DEN-LIDO-2PC', 'Lidocaine 2% with Epinephrine 1:100k', 'Anesthetics', 50, 15, 65.00, NULL, NULL, 'in_stock', '2026-09-30 14:46:56', '2026-09-30 14:46:56'),
-(2, 'DEN-NITR-M', 'Nitrile Examination Gloves (Medium, Box 100)', 'PPE', 12, 20, 15.50, NULL, NULL, 'low_stock', '2026-09-30 14:46:56', '2026-09-30 14:46:56'),
-(3, 'DEN-COMP-A2', 'Universal Microhybrid Composite Shade A2', 'Restorative', 30, 10, 48.00, NULL, NULL, 'in_stock', '2026-09-30 14:46:56', '2026-09-30 14:46:56');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `patients`
---
-
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `sku_code` (`sku_code`),
+  KEY `idx_inventory_sku` (`sku_code`),
+  KEY `idx_inventory_category` (`category`),
+  KEY `idx_inventory_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `patients`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `patients` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `last_name` varchar(60) NOT NULL,
+  `first_name` varchar(60) NOT NULL,
   `full_name` varchar(100) NOT NULL,
   `preferred_name` varchar(60) DEFAULT NULL,
   `date_of_birth` date NOT NULL,
-  `age` tinyint(3) UNSIGNED DEFAULT NULL,
+  `age` tinyint(3) unsigned DEFAULT NULL,
   `sex` enum('Male','Female','Prefer not to say','Other') DEFAULT NULL,
   `mobile_number` varchar(20) NOT NULL,
   `email` varchar(100) DEFAULT NULL,
@@ -127,133 +112,65 @@ CREATE TABLE `patients` (
   `emergency_contact_name` varchar(100) DEFAULT NULL,
   `emergency_contact_number` varchar(20) DEFAULT NULL,
   `emergency_contact_relationship` varchar(60) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `idx_patient_name` (`full_name`),
+  KEY `idx_patient_mobile` (`mobile_number`),
+  KEY `idx_patient_last_first` (`last_name`,`first_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `patients`
---
-
-INSERT INTO `patients` (`id`, `full_name`, `preferred_name`, `date_of_birth`, `age`, `sex`, `mobile_number`, `email`, `address`, `occupation`, `emergency_contact_name`, `emergency_contact_number`, `emergency_contact_relationship`, `created_at`) VALUES
-(1, 'Margaret Anne Fajardo', 'Meg', '2005-07-01', 21, 'Female', '0978654656', 'fajardomarga01@gmail.com', 'Gomburza St', 'Student', 'Uno', '092764932594', 'sikret', '2026-10-03 05:08:39');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `user_profiles`
---
-
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `user_profiles`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user_profiles` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `first_name` varchar(50) NOT NULL,
   `last_name` varchar(50) NOT NULL,
   `email` varchar(100) NOT NULL,
+  `password_hash` varchar(255) DEFAULT NULL,
   `phone_number` varchar(20) DEFAULT NULL,
   `role` enum('dentist','staff','patient','admin') NOT NULL DEFAULT 'staff',
   `status` enum('active','inactive','suspended') NOT NULL DEFAULT 'active',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`),
+  KEY `idx_user_email` (`email`),
+  KEY `idx_user_role` (`role`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
---
--- Dumping data for table `user_profiles`
---
-
-INSERT INTO `user_profiles` (`id`, `first_name`, `last_name`, `email`, `phone_number`, `role`, `status`, `created_at`, `updated_at`) VALUES
-(1, 'Meg', 'Santos', 'meg@megsclinic.com', '09171234567', 'dentist', 'active', '2026-09-30 14:46:56', '2026-09-30 14:46:56'),
-(2, 'Maria', 'Cruz', 'staff@megsclinic.com', '09187654321', 'staff', 'active', '2026-09-30 14:46:56', '2026-09-30 14:46:56');
-
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `clinic_settings`
---
-ALTER TABLE `clinic_settings`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `dental_assessments`
---
-ALTER TABLE `dental_assessments`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `patient_id` (`patient_id`),
-  ADD KEY `idx_assessment_status` (`status`),
-  ADD KEY `idx_assessment_date` (`submitted_at`);
-
---
--- Indexes for table `inventory_records`
---
-ALTER TABLE `inventory_records`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `sku_code` (`sku_code`),
-  ADD KEY `idx_inventory_sku` (`sku_code`),
-  ADD KEY `idx_inventory_category` (`category`),
-  ADD KEY `idx_inventory_status` (`status`);
-
---
--- Indexes for table `patients`
---
-ALTER TABLE `patients`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_patient_name` (`full_name`),
-  ADD KEY `idx_patient_mobile` (`mobile_number`);
-
---
--- Indexes for table `user_profiles`
---
-ALTER TABLE `user_profiles`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `email` (`email`),
-  ADD KEY `idx_user_email` (`email`),
-  ADD KEY `idx_user_role` (`role`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `clinic_settings`
---
-ALTER TABLE `clinic_settings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT for table `dental_assessments`
---
-ALTER TABLE `dental_assessments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `inventory_records`
---
-ALTER TABLE `inventory_records`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `patients`
---
-ALTER TABLE `patients`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT for table `user_profiles`
---
-ALTER TABLE `user_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- Constraints for dumped tables
---
-
---
--- Constraints for table `dental_assessments`
---
-ALTER TABLE `dental_assessments`
-  ADD CONSTRAINT `dental_assessments_ibfk_1` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`) ON DELETE SET NULL;
-COMMIT;
-
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+LOCK TABLES `clinic_settings` WRITE;
+/*!40000 ALTER TABLE `clinic_settings` DISABLE KEYS */;
+INSERT INTO `clinic_settings` VALUES (1,'Dr. Sample Dentist','Hell no','Dental Assessment Form','2026-10-04 04:03:40');
+/*!40000 ALTER TABLE `clinic_settings` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+

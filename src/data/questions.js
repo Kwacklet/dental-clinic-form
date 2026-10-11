@@ -1,43 +1,7 @@
-/*
- * OFFICIAL DENTAL ASSESSMENT QUESTIONNAIRE
- * ---------------------------------------
- * Source: Kwistyons.docx ("Health Check Questionnaire for Meg's Clinic").
- * Question wording, answer choices and Required/Optional status follow the
- * document. The UI reads everything from this file.
- *
- * Required status: the document marks only some fields as Required. Questions
- * it does not mark are optional here. To make one required, add `required: true`.
- *
- * Question fields:
- *   id          unique key used to store the answer
- *   label       question text shown to the patient
- *   type        'text' | 'name' | 'email' | 'tel' (digits only) | 'number' | 'date'
- *               | 'textarea' | 'select' | 'radio' | 'checkbox'
- *               | 'scale' (0-10 slider) | 'consent' (checkbox that must be ticked)
- *   required    true if the question must be answered
- *   options     choices for select / radio / checkbox
- *   helpText, placeholder, min, max, maxLength, minLabel, maxLabel  (optional)
- *
- * Branching (`showIf`): the question only appears when the rule matches.
- *   { questionId: 'hasAllergies', value: 'Yes' }            answer is "Yes"
- *   { questionId: 'takingMedications', value: ['Yes', 'Not sure'] }  either one
- *   { questionId: 'visitReasons', value: 'Toothache' }      checkbox includes "Toothache"
- *   { questionId: 'medicalConditions', anyExcept: 'None' }  anything other than "None"
- * Hidden questions are skipped by validation and removed from the answers.
- *
- * `group` puts follow-up questions under a heading (e.g. "Toothache").
- *
- * Automatic answers: `calculate(answers, previousAnswers)` fills in the answer,
- * recalculated when the `calculateFrom` answer changes (e.g. age from date of birth).
- * `lockedIf(answers)` makes a radio question read-only while it returns true,
- * with `lockedText` shown underneath (e.g. pregnancy for males).
- */
 import { calculateAge } from '../utils/dates'
 
 const NO_YES = ['No', 'Yes']
 const NO_YES_NOT_SURE = ['No', 'Yes', 'Not sure']
-
-// ---------- Small helpers to keep the list below readable ----------
 
 function radio(id, label, options) {
   return { id, label, type: 'radio', required: false, options }
@@ -59,8 +23,6 @@ function consent(id, label) {
   return { id, label, type: 'consent', required: true }
 }
 
-// For choices written as "Other: ________" in the document: adds a small
-// "please specify" text box that only appears when "Other" is selected.
 function withOther(question) {
   const otherId = `${question.id}Other`
   return [
@@ -77,9 +39,6 @@ function withOther(question) {
   ]
 }
 
-// Follow-up questions for one Reason for Visit. They appear only when that
-// reason is ticked, under a heading with the reason's name.
-// Several reasons can be ticked at once, so several groups can be shown.
 function reasonFollowUps(reason, title, questions) {
   return questions.flat().map((question) => {
     if (question.isOtherText) return { ...question, group: title }
@@ -87,16 +46,14 @@ function reasonFollowUps(reason, title, questions) {
   })
 }
 
-// ---------- The questionnaire ----------
-
 export const questionnaireSections = [
   {
-    // Section 1. Laid out in two columns and shown separately in the summary.
     id: 'patient',
     title: 'Patient Information',
     isPatientInfo: true,
     questions: [
-      { id: 'fullName', label: 'Full Name', type: 'name', required: true, maxLength: 100 },
+      { id: 'lastName', label: 'Last Name', type: 'name', required: true, maxLength: 60 },
+      { id: 'firstName', label: 'First Name', type: 'name', required: true, maxLength: 60 },
       { id: 'preferredName', label: 'Preferred Name', type: 'text', required: false, maxLength: 60 },
       { id: 'dateOfBirth', label: 'Date of Birth', type: 'date', required: true },
       {
@@ -107,7 +64,6 @@ export const questionnaireSections = [
         min: 0,
         max: 120,
         helpText: 'Filled in from your date of birth. You can change it.',
-        // Recalculated whenever the date of birth changes.
         calculateFrom: 'dateOfBirth',
         calculate: (answers) => calculateAge(answers.dateOfBirth),
       },
@@ -299,7 +255,6 @@ export const questionnaireSections = [
       ]),
 
       ...reasonFollowUps('Tooth extraction', 'Tooth Extraction', [
-        // The document lists a plain "Other" here (no blank), so no text box.
         radio('extractionReason', 'What is the reason for the tooth extraction?', [
           'Toothache',
           'Broken tooth',
@@ -541,7 +496,6 @@ export const questionnaireSections = [
           'Other',
           'None',
         ]),
-        // "None" cannot be ticked together with a condition.
         exclusiveOption: 'None',
       }),
       {
@@ -620,13 +574,11 @@ export const questionnaireSections = [
           'Not applicable',
           'Prefer not to say',
         ]),
-        // Set to "Not applicable" and locked when Sex is Male.
         lockedIf: (answers) => answers.sex === 'Male',
         lockedText: 'Set to "Not applicable" because you chose Male as your sex.',
         calculateFrom: 'sex',
         calculate: (answers, previousAnswers) => {
           if (answers.sex === 'Male') return 'Not applicable'
-          // Sex changed away from Male: remove the automatic answer so the patient chooses.
           if (previousAnswers.sex === 'Male' && answers.pregnancy === 'Not applicable') return undefined
           return answers.pregnancy
         },
@@ -676,5 +628,4 @@ export const questionnaireSections = [
   },
 ]
 
-// Flat list of every question, used for branching lookups.
 export const allQuestions = questionnaireSections.flatMap((section) => section.questions)

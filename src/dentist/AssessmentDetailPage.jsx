@@ -103,25 +103,14 @@ function AssessmentDetailPage({ assessmentId }) {
         </div>
 
         <div className="detail-actions">
-          {isReviewed ? (
-            <button
-              type="button"
-              className="button button-secondary"
-              onClick={() => changeStatus('New')}
-              disabled={savingStatus}
-            >
-              Mark as new
-            </button>
-          ) : (
-            <button
-              type="button"
-              className="button button-primary"
-              onClick={() => changeStatus('Reviewed')}
-              disabled={savingStatus}
-            >
-              {savingStatus ? 'Saving…' : 'Mark as reviewed'}
-            </button>
-          )}
+          <button
+            type="button"
+            className={`button ${isReviewed ? 'button-secondary' : 'button-primary'}`}
+            onClick={() => changeStatus(isReviewed ? 'New' : 'Reviewed')}
+            disabled={savingStatus}
+          >
+            {isReviewed ? 'Mark as new' : savingStatus ? 'Saving…' : 'Mark as reviewed'}
+          </button>
           <DeleteButton patientName={assessment.answers.fullName} onDelete={handleDelete} />
         </div>
       </div>

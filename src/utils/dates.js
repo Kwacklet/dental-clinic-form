@@ -4,10 +4,7 @@
  */
 
 export function getTodayISO() {
-  const now = new Date()
-  const month = String(now.getMonth() + 1).padStart(2, '0')
-  const day = String(now.getDate()).padStart(2, '0')
-  return `${now.getFullYear()}-${month}-${day}`
+  return toLocalISODate(new Date())
 }
 
 // Returns a Date object, or null if the value is not a real calendar date.
@@ -47,9 +44,9 @@ export function formatDateTime(isoString) {
   return new Date(isoString).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })
 }
 
-// ISO timestamp -> the local calendar date as 'YYYY-MM-DD'
-export function toLocalISODate(isoString) {
-  const date = new Date(isoString)
+// ISO timestamp or Date -> the local calendar date as 'YYYY-MM-DD'
+export function toLocalISODate(value) {
+  const date = new Date(value)
   const month = String(date.getMonth() + 1).padStart(2, '0')
   const day = String(date.getDate()).padStart(2, '0')
   return `${date.getFullYear()}-${month}-${day}`

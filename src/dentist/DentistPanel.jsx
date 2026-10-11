@@ -145,8 +145,14 @@ function PanelLayout({ email, pathname }) {
               {initials}
             </span>
             <div>
-              <span className="dentist-owner-name">{settings.dentistName}</span>
-              {email && <span className="dentist-owner-role">{email}</span>}
+              <span className="dentist-owner-name" title={settings.dentistName}>
+                {settings.dentistName}
+              </span>
+              {email && (
+                <span className="dentist-owner-role" title={email}>
+                  {email}
+                </span>
+              )}
             </div>
           </div>
           {LOGIN_REQUIRED && (
