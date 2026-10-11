@@ -25,3 +25,8 @@ dist-ssr
 
 # Local database backups (contain patient data)
 db_backups
+
+# Environment files (real credentials)
+.env
+.env.*
+!.env.example

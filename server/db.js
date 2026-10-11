@@ -1,11 +1,4 @@
 import mysql from 'mysql2/promise';
+import { config } from './config.js';
 
-export const pool = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'dental_clinic_db',
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-});
+export const pool = mysql.createPool({ ...config.db, connectionLimit: 10 });

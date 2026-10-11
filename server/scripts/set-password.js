@@ -37,9 +37,7 @@ async function main() {
 
   const hash = await bcrypt.hash(password, 12);
   await pool.execute('UPDATE user_profiles SET password_hash = ? WHERE id = ?', [hash, user.id]);
-  // Log out everywhere, so an old password's sessions stop working.
-  await pool.execute('DELETE FROM auth_sessions WHERE user_id = ?', [user.id]);
-  console.log('Password saved. Any existing logins for this account were signed out.');
+  console.log('Password saved. Logins made with the old password stay valid until they expire (12 hours).');
 }
 
 main()
