@@ -29,229 +29,150 @@ A full-stack health check questionnaire for a dental clinic. Patients fill in a 
 
 ## Setting up on a new computer
 
-These steps assume Windows and the VS Code terminal (PowerShell). Mac and Linux commands are given where they differ. The whole setup takes about 15 minutes.
+Setup takes about 10 minutes, and most of it is downloading. Run all commands in VS Code's terminal (**Terminal → New Terminal**) from the main project folder, the one that contains `client`, `server` and this README.
 
-### Step 0: Install the tools
+### 1. Install the tools
 
-| Tool | Why | Download |
-| --- | --- | --- |
-| **Node.js 22 LTS** (or 20.19+) | Runs the server and the React dev server | https://nodejs.org (choose "LTS") |
-| **XAMPP** | Provides MySQL and phpMyAdmin | https://www.apachefriends.org |
-| **Git** | Downloads the project | https://git-scm.com |
-| **VS Code** | Editor and terminal | https://code.visualstudio.com |
-| **Thunder Client** (VS Code extension) | Tests the API (optional) | VS Code → Extensions → search "Thunder Client" |
+| Tool | Download |
+| --- | --- |
+| **Node.js 22 LTS** | https://nodejs.org (choose "LTS") |
+| **XAMPP** (for MySQL) | https://www.apachefriends.org |
+| **Git** | https://git-scm.com |
+| **VS Code** | https://code.visualstudio.com |
 
-When installing XAMPP you only need the **MySQL** and **phpMyAdmin** components (Apache is needed only to open phpMyAdmin).
+Restart VS Code after installing, then check that `node -v` prints `v22` (or `v20.19` or newer).
 
-Check that Node.js and Git are installed. Open a new terminal (in VS Code: **Terminal → New Terminal**) and run:
-
-```powershell
-node -v    # should print v22.x.x (or v20.19 or newer)
-npm -v     # should print a version number
-git --version
-```
-
-If a command is "not recognized", restart VS Code (or the computer) after installing, so the terminal picks up the new program.
-
-### Step 1: Get the code
-
-In the terminal, go to the folder where you keep projects and clone the repository:
+### 2. Download the project
 
 ```powershell
-cd $HOME\Documents
 git clone https://github.com/Kwacklet/dental-clinic-form.git
 cd dental-clinic-form
 code .
 ```
 
-`code .` opens the project in VS Code. The folder must contain `client`, `server`, `docs` and this `README.md`. (No Git? On GitHub, click **Code → Download ZIP**, extract it, and open the extracted folder in VS Code with **File → Open Folder**.)
+(No Git? On GitHub, click **Code → Download ZIP**, extract it, and open the folder in VS Code.)
 
-All commands below are run in VS Code's terminal, starting from this project folder.
+### 3. Start MySQL
 
-### Step 2: Install the dependencies
+Open the **XAMPP Control Panel** and click **Start** next to **MySQL**. It turns green.
 
-The server and the client each have their own libraries. Install both:
-
-```powershell
-cd server
-npm install
-cd ..\client
-npm install
-cd ..
-```
-
-(On Mac/Linux use `cd ../client`.) Each `npm install` creates a `node_modules` folder and should end with `found 0 vulnerabilities` or a short summary. Warnings are fine; lines starting with `npm ERR!` are not (see [Troubleshooting](#troubleshooting)).
-
-### Step 3: Start MySQL
-
-1. Open the **XAMPP Control Panel**.
-2. Click **Start** next to **MySQL**. The module name turns green and shows a port, normally **3306**.
-3. Click **Start** next to **Apache** too, if you want to use phpMyAdmin in the next step.
-
-### Step 4: Create the database
-
-`server/schema.sql` creates the `dental_clinic_db` database, its four tables, and three fictional sample assessments. Use **one** of the two options.
-
-**Option A: phpMyAdmin**
-
-1. Open http://localhost/phpmyadmin in your browser.
-2. Do **not** click on any database in the left panel. Stay on the home page (click the phpMyAdmin logo if needed), because the file creates the database itself.
-3. Click the **Import** tab at the top.
-4. Under **File to import**, click **Choose File** and select `server/schema.sql` from the project folder.
-5. Scroll down and click **Import** (or **Go**).
-6. You should see "Import has been successfully finished". In the left panel, `dental_clinic_db` appears with 4 tables: `clinic_settings`, `dental_assessments`, `patients`, `user_profiles`.
-
-**Option B: command line** (no Apache needed). From the project folder:
+### 4. Run the setup
 
 ```powershell
-C:\xampp\mysql\bin\mysql.exe -u root -e "source server/schema.sql"
+npm run setup
 ```
 
-If your MySQL `root` user has a password, add `-p` after `root` and type the password when asked. On Mac/Linux, use `mysql` instead of the full path.
+This one command:
 
-Check the result:
+1. installs the server and client packages,
+2. creates `server/.env` (with a new random login secret) and `client/.env`,
+3. creates the `dental_clinic_db` database with three fictional sample assessments.
+
+It ends with `Setup complete`. It is safe to run again: it never overwrites an existing `.env` file or database.
+
+### 5. Set a Dentist Panel password
 
 ```powershell
-C:\xampp\mysql\bin\mysql.exe -u root -e "SHOW TABLES FROM dental_clinic_db"
-```
-
-It should list the 4 tables.
-
-> **"Table already exists" error?** The database was created before. To start over, delete it first (this erases all its data): `C:\xampp\mysql\bin\mysql.exe -u root -e "DROP DATABASE dental_clinic_db"`, then import again.
-
-### Step 5: Create the `.env` files
-
-The `.env` files hold settings and secrets. They are not in the repository; each computer makes its own from the `.env.example` templates.
-
-```powershell
-Copy-Item server\.env.example server\.env
-Copy-Item client\.env.example client\.env
-```
-
-(Mac/Linux: `cp server/.env.example server/.env` and `cp client/.env.example client/.env`.)
-
-Now create a secret key for logins:
-
-```powershell
-node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
-```
-
-Copy the long line it prints. Open `server/.env` in VS Code and paste it after `JWT_SECRET=`. The file should look like this (your secret will be different):
-
-```ini
-PORT=3000
-CORS_ORIGIN=http://localhost:5173
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=
-DB_NAME=dental_clinic_db
-JWT_SECRET=3f9a1c...a very long random string...7b2e
-```
-
-| Variable | Meaning | Change it when |
-| --- | --- | --- |
-| `PORT` | Port the API runs on | Port 3000 is used by another program |
-| `CORS_ORIGIN` | Address of the React app that may call the API | The app runs on another port (separate several with commas) |
-| `DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` | MySQL login and database | Your MySQL `root` has a password, or you use another user or database name |
-| `JWT_SECRET` | Key used to sign login tokens | Never share it; every computer should have its own |
-
-`client/.env` contains one line and normally needs no change:
-
-```ini
-VITE_API_URL=http://localhost:3000/api
-```
-
-If you changed `PORT` in `server/.env`, change `3000` here too.
-
-Save both files. **Never commit `.env` files**; `.gitignore` already excludes them.
-
-### Step 6: Create a Dentist Panel login
-
-The sample data includes an account `dentist@example.com` without a password. Give it one:
-
-```powershell
-cd server
 npm run set-password -- dentist@example.com
-cd ..
 ```
 
-Type a password (at least 8 characters; nothing appears on screen while you type, that is normal), press Enter, type it again, and press Enter. You should see `Password saved.`
+Type a password (at least 8 characters; nothing shows while you type), press Enter, type it again, press Enter.
 
-**Your own account instead:** in phpMyAdmin open `dental_clinic_db` → **SQL** tab, and run (with your own details):
+### 6. Start the app
+
+```powershell
+npm run dev
+```
+
+This starts both the server and the app in one terminal. Wait for `Connected to MySQL database` and `Local: http://localhost:5173/`, then open:
+
+- **Patient form:** http://localhost:5173
+- **Dentist Panel:** http://localhost:5173/dentist (log in with `dentist@example.com` and your password)
+
+Press `Ctrl+C` to stop.
+
+### Check that it works
+
+1. The patient form shows "Dental Assessment Form" and "Section 1 of 10".
+2. Clicking **Next** with empty fields shows red error messages.
+3. Fill in the required fields, go through the sections, tick the consent boxes, then **Review answers** → **Send to clinic**: a green "Thank you" appears.
+4. In the Dentist Panel, the new assessment is on the dashboard. Open it, **Mark as reviewed**, then **Delete** it.
+5. Stop the app (`Ctrl+C`), run `npm run dev` again, and refresh: the data is still there.
+
+### Optional settings
+
+`npm run setup` uses MySQL's default XAMPP login (user `root`, no password). If your MySQL is different, edit `server/.env` and run `npm run setup` again.
+
+| Variable in `server/.env` | Meaning |
+| --- | --- |
+| `PORT` | Port the API runs on (default 3000). If you change it, change `VITE_API_URL` in `client/.env` too |
+| `CORS_ORIGIN` | Address of the app allowed to call the API (default http://localhost:5173) |
+| `DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` | MySQL login and database name |
+| `JWT_SECRET` | Key that signs login tokens; created by setup. Never share or commit it |
+
+**Your own Dentist Panel account:** in phpMyAdmin (http://localhost/phpmyadmin, needs Apache started in XAMPP) open `dental_clinic_db` → **SQL** and run:
 
 ```sql
 INSERT INTO user_profiles (first_name, last_name, email, role, status)
 VALUES ('Juan', 'Dela Cruz', 'you@example.com', 'dentist', 'active');
 ```
 
-Then run `npm run set-password -- you@example.com` in the `server` folder as above. Roles `dentist`, `staff` and `admin` can log in. Use the same command later to reset a forgotten password.
+Then `npm run set-password -- you@example.com`. Roles `dentist`, `staff` and `admin` can log in.
 
-### Step 7: Start the server (API)
+<details>
+<summary><strong>Manual setup</strong> (what <code>npm run setup</code> does, step by step)</summary>
 
-```powershell
-cd server
-npm run dev
-```
+1. Install packages:
+   ```powershell
+   cd server; npm install; cd ..
+   cd client; npm install; cd ..
+   ```
+2. Create the `.env` files:
+   ```powershell
+   Copy-Item server\.env.example server\.env
+   Copy-Item client\.env.example client\.env
+   node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
+   ```
+   Paste the printed line after `JWT_SECRET=` in `server/.env`.
+3. Create the database, either in phpMyAdmin (home page → **Import** → choose `server/schema.sql` → **Import**) or with:
+   ```powershell
+   C:\xampp\mysql\bin\mysql.exe -u root -e "source server/schema.sql"
+   ```
+4. Run the server and the client in two terminals:
+   ```powershell
+   cd server; npm run dev
+   ```
+   ```powershell
+   cd client; npm run dev
+   ```
 
-Wait for both lines:
-
-```
-API running on http://localhost:3000
-Connected to MySQL database: dental_clinic_db
-```
-
-Leave this terminal open; it shows a line for every request (e.g. `POST /api/assessments 201 34ms`). To check it in the browser, open http://localhost:3000/api/settings; you should see the clinic name as JSON.
-
-### Step 8: Start the client (React app)
-
-Open a **second** terminal (the **+** button in VS Code's terminal panel) and run:
-
-```powershell
-cd client
-npm run dev
-```
-
-Wait for `Local: http://localhost:5173/`. Leave this terminal open too.
-
-### Step 9: Check that everything works
-
-Open http://localhost:5173 and go through this list:
-
-1. **Patient form loads** with the title "Dental Assessment Form" and "Section 1 of 10".
-2. Click **Next** without filling anything in: red error messages appear under the required fields.
-3. Fill in Last Name, First Name, Date of Birth and Mobile Number; Age fills in by itself. Click **Next** through the sections, tick the three consent boxes, click **Review answers**, then **Send to clinic**. A green "Thank you" message appears.
-4. Open http://localhost:5173/dentist and log in with the account from Step 6. The dashboard shows the sample assessments and the one you just sent.
-5. Open your assessment, click **Mark as reviewed**, then go back and **Delete** it. It disappears from the list.
-6. Stop the server (`Ctrl+C` in its terminal), start it again with `npm run dev`, and refresh the page: the data is still there.
-
-If all six work, the setup is complete.
+</details>
 
 ## Everyday use
 
 1. XAMPP Control Panel → **Start** MySQL.
-2. Terminal 1: `cd server` → `npm run dev`
-3. Terminal 2: `cd client` → `npm run dev`
-4. Open http://localhost:5173 (patient form) or http://localhost:5173/dentist (Dentist Panel).
+2. `npm run dev` in the main project folder.
+3. Open http://localhost:5173 or http://localhost:5173/dentist.
 
-To stop: press `Ctrl+C` in both terminals, then **Stop** MySQL in XAMPP.
+To stop: `Ctrl+C` in the terminal, then **Stop** MySQL in XAMPP.
 
 ## Troubleshooting
 
-| What you see | Cause | Fix |
-| --- | --- | --- |
-| `Database connection error: MySQL is not running` | MySQL is stopped | Start MySQL in XAMPP, then restart the server |
-| `Database connection error: Access denied for user 'root'` | Wrong MySQL password | Set `DB_PASSWORD` in `server/.env` |
-| `Database connection error: Unknown database 'dental_clinic_db'` | Database not created | Do Step 4 |
-| `JWT_SECRET is missing` when starting the server | No `server/.env`, or the secret is empty | Do Step 5 |
-| `Error: listen EADDRINUSE ... :3000` | The server is already running in another terminal | Close the other terminal, or press `Ctrl+C` in it |
-| Vite starts on **5174** instead of 5173 | The client is already running elsewhere | Close the other one; the API only accepts 5173 (`CORS_ORIGIN`) |
-| Page says "Could not reach the server" | The server is not running | Do Step 7 |
-| Browser console shows a **CORS** error | The app's address is not in `CORS_ORIGIN` | Use http://localhost:5173, or add the address to `CORS_ORIGIN` and restart the server |
-| "Incorrect email or password" for the right password | No password set yet, or a typo in the email | Run `npm run set-password -- your@email.com` again |
-| "Too many failed attempts" | 5 wrong passwords for that email | Wait 15 minutes, or restart the server |
-| `'node' is not recognized` / `'npm' is not recognized` | Node.js not installed, or terminal opened before installing | Install Node.js, then restart VS Code |
-| XAMPP MySQL turns red or stops at once | Port 3306 used by another MySQL | Stop the other MySQL service, or check XAMPP's log panel |
-| `npm ERR!` during `npm install` | Network problem or old Node.js | Check `node -v`, then run `npm install` again |
+| What you see | Fix |
+| --- | --- |
+| `MySQL is not running` | Start MySQL in XAMPP, then run the command again |
+| `MySQL refused the login` / `Access denied for user 'root'` | Set `DB_USER` and `DB_PASSWORD` in `server/.env` |
+| `Unknown database 'dental_clinic_db'` | Run `npm run setup` (or `npm run init-db`) |
+| `JWT_SECRET is missing` | Run `npm run setup` |
+| `listen EADDRINUSE ... :3000` | The app is already running in another terminal; close it or press `Ctrl+C` there |
+| Vite says it started on **5174** | The app is already running elsewhere; close it. The API only accepts 5173 |
+| Page says "Could not reach the server" | The server is not running; run `npm run dev` |
+| CORS error in the browser console | Use http://localhost:5173 (the address in `CORS_ORIGIN`) |
+| "Incorrect email or password" | Set the password again with `npm run set-password -- your@email.com` |
+| "Too many failed attempts" | Wait 15 minutes, or restart the app |
+| `'node'` or `'npm' is not recognized` | Install Node.js, then restart VS Code |
+| `Node.js ... is too old` | Install Node.js 22 LTS |
+| XAMPP MySQL turns red at once | Another MySQL is using port 3306; stop it, or read XAMPP's log panel |
 
 ## API endpoints
 
@@ -273,7 +194,7 @@ An invalid request returns `400` with a message and the field, e.g. `{ "error": 
 
 ## Testing the API with Thunder Client
 
-Thunder Client sends requests straight to the API, without the React app. This tutorial checks every endpoint, every status code, and the server-side validation. Before starting, MySQL and the server must be running (Steps 3 and 7), and you need a Dentist Panel login (Step 6).
+Thunder Client sends requests straight to the API, without the React app. This tutorial checks every endpoint, every status code, and the server-side validation. Before starting, the app must be running (`npm run dev`) and you need a Dentist Panel password ([step 5](#5-set-a-dentist-panel-password)).
 
 ### 1. Install and open Thunder Client
 
@@ -299,7 +220,7 @@ Create a request:
 - Method **POST**, URL `http://localhost:3000/api/auth/login`
 - **Body** tab → **JSON**:
   ```json
-  { "email": "dentist@example.com", "password": "the password from Step 6" }
+  { "email": "dentist@example.com", "password": "the password from step 5" }
   ```
 - **Send**. Expected: **200 OK** and a response like `{ "token": "eyJhbGciOi...", "user": { ... } }`.
 
@@ -311,7 +232,7 @@ For every request marked 🔒 below, open its **Auth** tab → **Bearer** and ty
 
 ### 5. Normal requests (happy path)
 
-Send these in order. The server terminal logs each one.
+Send these in order. The terminal running `npm run dev` logs each one.
 
 | # | Request | Body (JSON) | Expected |
 | --- | --- | --- | --- |
@@ -391,7 +312,7 @@ Use a made-up email for P4, because the lockout blocks that email for 15 minutes
 ### 9. Data survives a restart
 
 1. Send H3 to create a record and note its `id`.
-2. Stop the server (`Ctrl+C`) and start it again (`npm run dev`).
+2. Stop the app (`Ctrl+C`) and start it again (`npm run dev`).
 3. Send H4 with that `id`: **200**, the record is still there. Delete it with H6 when you are done.
 
 ## Screenshots
@@ -407,6 +328,9 @@ Use a made-up email for P4, because the lockout blocks that email for 15 minutes
 ## Project structure
 
 ```
+package.json                npm run setup / dev / set-password / init-db
+scripts/setup.js            installs packages, creates the .env files and the database
+scripts/dev.js              starts the server and the client together
 client/                     React + TypeScript (Vite)
   src/api/axios.ts          the shared Axios instance (baseURL, token and 401 interceptors)
   src/api/                  one file per resource: assessments, settings, auth
@@ -424,6 +348,7 @@ server/                     Express API
   db.js, config.js          connection pool and .env settings
   schema.sql                database, tables and sample data
   scripts/set-password.js   sets a Dentist Panel password
+  scripts/init-db.js        creates the database from schema.sql (if it does not exist)
 ```
 
 ## Bonus features
