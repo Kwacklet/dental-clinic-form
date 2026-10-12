@@ -21,7 +21,7 @@ function askHidden(question) {
 
 async function main() {
   const email = (process.argv[2] ?? '').trim().toLowerCase();
-  if (!email) throw new Error('Give the account email, e.g. npm run set-password -- dentist@example.com');
+  if (!email) throw new Error('Give the account email, e.g. npm run set-password -- meg@megsclinic.com');
 
   const [rows] = await pool.execute('SELECT id, first_name, last_name, role FROM user_profiles WHERE email = ?', [email]);
   if (rows.length === 0) throw new Error(`No account with the email ${email} in user_profiles.`);

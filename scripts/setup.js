@@ -48,7 +48,7 @@ if (!run('npm run init-db --silent', 'server')) fail('the database could not be 
 
 console.log(`
 Setup complete. Next:
-  1. Set a Dentist Panel password:  npm run set-password -- dentist@example.com
+  1. Set a Dentist Panel password:  npm run set-password -- meg@megsclinic.com
   2. Start the app:                 npm run dev
   3. Open http://localhost:5173 (patient form) or http://localhost:5173/dentist
 `);

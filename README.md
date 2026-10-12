@@ -67,14 +67,23 @@ This one command:
 
 1. installs the server and client packages,
 2. creates `server/.env` (with a new random login secret) and `client/.env`,
-3. creates the `dental_clinic_db` database with three fictional sample assessments.
+3. creates the `dental_clinic_db` database with two Dentist Panel accounts and three fictional sample assessments.
 
 It ends with `Setup complete`. It is safe to run again: it never overwrites an existing `.env` file or database.
 
 ### 5. Set a Dentist Panel password
 
+The database comes with two accounts, both without a password:
+
+| Email | Name | Role |
+| --- | --- | --- |
+| `meg@megsclinic.com` | Meg Santos | dentist |
+| `staff@megsclinic.com` | Maria Cruz | staff |
+
+Set a password for the one you will use (the dentist account is used in the rest of this guide):
+
 ```powershell
-npm run set-password -- dentist@example.com
+npm run set-password -- meg@megsclinic.com
 ```
 
 Type a password (at least 8 characters; nothing shows while you type), press Enter, type it again, press Enter.
@@ -88,7 +97,7 @@ npm run dev
 This starts both the server and the app in one terminal. Wait for `Connected to MySQL database` and `Local: http://localhost:5173/`, then open:
 
 - **Patient form:** http://localhost:5173
-- **Dentist Panel:** http://localhost:5173/dentist (log in with `dentist@example.com` and your password)
+- **Dentist Panel:** http://localhost:5173/dentist (log in with `meg@megsclinic.com` and your password)
 
 Press `Ctrl+C` to stop.
 
@@ -297,7 +306,7 @@ Create a request:
 - Method **POST**, URL `http://localhost:3000/api/auth/login`
 - **Body** tab → **JSON**:
   ```json
-  { "email": "dentist@example.com", "password": "the password from step 5" }
+  { "email": "meg@megsclinic.com", "password": "the password from step 5" }
   ```
 - **Send**. Expected: **200 OK** and a response like `{ "token": "eyJhbGciOi...", "user": { ... } }`.
 

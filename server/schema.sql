@@ -83,9 +83,9 @@ CREATE TABLE dental_assessments (
 INSERT INTO clinic_settings (dentist_name, clinic_name, form_title) VALUES
   ('Dr. Sample Dentist', 'Meg''s Clinic', 'Dental Assessment Form');
 
-INSERT INTO user_profiles (first_name, last_name, email, role, status) VALUES
-  ('Sample', 'Dentist', 'dentist@example.com', 'dentist', 'active'),
-  ('Sample', 'Staff', 'staff@example.com', 'staff', 'active');
+INSERT INTO user_profiles (first_name, last_name, email, phone_number, role, status) VALUES
+  ('Meg', 'Santos', 'meg@megsclinic.com', '09171234567', 'dentist', 'active'),
+  ('Maria', 'Cruz', 'staff@megsclinic.com', '09187654321', 'staff', 'active');
 
 INSERT INTO patients (last_name, first_name, full_name, date_of_birth, age, sex, mobile_number, email) VALUES
   ('Dela Cruz', 'Juan', 'Juan Dela Cruz', '1990-04-12', 36, 'Male', '09170000001', 'juan@example.com'),
