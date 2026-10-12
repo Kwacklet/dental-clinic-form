@@ -1,0 +1,11 @@
+{
+  "name": "dental-clinic-form",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "setup": "node scripts/setup.js",
+    "dev": "node scripts/dev.js",
+    "set-password": "npm --prefix server run set-password --",
+    "init-db": "npm --prefix server run init-db"
+  }
+}

@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node app.js",
     "dev": "node --watch app.js",
-    "set-password": "node scripts/set-password.js"
+    "set-password": "node scripts/set-password.js",
+    "init-db": "node scripts/init-db.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
