@@ -9,15 +9,16 @@ A full-stack health check questionnaire for a dental clinic. Patients fill in a 
 
 1. [Tech stack](#tech-stack)
 2. [Setting up on a new computer](#setting-up-on-a-new-computer)
-3. [Everyday use](#everyday-use)
-4. [Troubleshooting](#troubleshooting)
-5. [API endpoints](#api-endpoints)
-6. [Testing the API with Thunder Client](#testing-the-api-with-thunder-client)
-7. [Screenshots](#screenshots)
-8. [Project structure](#project-structure)
-9. [Bonus features](#bonus-features)
-10. [Known issues](#known-issues)
-11. [Use of AI tools](#use-of-ai-tools)
+3. [Adding a staff account](#adding-a-staff-account)
+4. [Everyday use](#everyday-use)
+5. [Troubleshooting](#troubleshooting)
+6. [API endpoints](#api-endpoints)
+7. [Testing the API with Thunder Client](#testing-the-api-with-thunder-client)
+8. [Screenshots](#screenshots)
+9. [Project structure](#project-structure)
+10. [Bonus features](#bonus-features)
+11. [Known issues](#known-issues)
+12. [Use of AI tools](#use-of-ai-tools)
 
 ## Tech stack
 
@@ -110,15 +111,6 @@ Press `Ctrl+C` to stop.
 | `DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` | MySQL login and database name |
 | `JWT_SECRET` | Key that signs login tokens; created by setup. Never share or commit it |
 
-**Your own Dentist Panel account:** in phpMyAdmin (http://localhost/phpmyadmin, needs Apache started in XAMPP) open `dental_clinic_db` → **SQL** and run:
-
-```sql
-INSERT INTO user_profiles (first_name, last_name, email, role, status)
-VALUES ('Juan', 'Dela Cruz', 'you@example.com', 'dentist', 'active');
-```
-
-Then `npm run set-password -- you@example.com`. Roles `dentist`, `staff` and `admin` can log in.
-
 <details>
 <summary><strong>Manual setup</strong> (what <code>npm run setup</code> does, step by step)</summary>
 
@@ -147,6 +139,91 @@ Then `npm run set-password -- you@example.com`. Roles `dentist`, `staff` and `ad
    ```
 
 </details>
+
+## Adding a staff account
+
+There is no sign-up page: accounts are added to the `user_profiles` table, then given a password with a command. This example adds a staff member, **Ana Reyes**, with the email `ana.reyes@example.com`. Use your own details.
+
+### Step 1: Add the account to the database
+
+Use **one** of these three ways. MySQL must be running.
+
+**A. phpMyAdmin form** (needs **Apache** started in XAMPP too)
+
+1. Open http://localhost/phpmyadmin.
+2. In the left panel, click `dental_clinic_db`, then the `user_profiles` table.
+3. Click the **Insert** tab at the top.
+4. Fill in the form:
+
+   | Column | Value |
+   | --- | --- |
+   | `id` | leave empty (filled in automatically) |
+   | `first_name` | `Ana` |
+   | `last_name` | `Reyes` |
+   | `email` | `ana.reyes@example.com` |
+   | `password_hash` | leave empty, with the **Null** box ticked (the password is set in Step 2) |
+   | `phone_number` | optional |
+   | `role` | `staff` (or `dentist` / `admin`) |
+   | `status` | `active` |
+   | `created_at`, `updated_at` | leave empty (filled in automatically) |
+
+5. Click **Go**. phpMyAdmin shows "1 row inserted".
+
+**B. phpMyAdmin SQL tab:** click `dental_clinic_db` → **SQL**, paste this, and click **Go**:
+
+```sql
+INSERT INTO user_profiles (first_name, last_name, email, role, status)
+VALUES ('Ana', 'Reyes', 'ana.reyes@example.com', 'staff', 'active');
+```
+
+**C. Command line** (no Apache needed), from the main project folder:
+
+```powershell
+C:\xampp\mysql\bin\mysql.exe -u root dental_clinic_db -e "INSERT INTO user_profiles (first_name, last_name, email, role, status) VALUES ('Ana', 'Reyes', 'ana.reyes@example.com', 'staff', 'active')"
+```
+
+Roles that can log in to the Dentist Panel:
+
+| Role | Who it is for |
+| --- | --- |
+| `dentist` | The dentist / form owner |
+| `staff` | Clinic staff (receptionist, assistant) |
+| `admin` | Administrator |
+
+All three see the same panel. An account with role `patient`, or with status `inactive` or `suspended`, cannot log in.
+
+### Step 2: Set the password
+
+From the main project folder:
+
+```powershell
+npm run set-password -- ana.reyes@example.com
+```
+
+1. It shows `Setting the password for Ana Reyes (staff).`, which confirms it found the account.
+2. Type a password of at least 8 characters. Nothing appears while you type; that is normal.
+3. Press Enter, type the same password again, and press Enter.
+4. It shows `Password saved.`
+
+In phpMyAdmin, the account's `password_hash` now shows a value starting with `$2b$12$`. This is the scrambled (bcrypt) version; the real password is never stored. Do not type a password into the `password_hash` cell yourself; it will not work. Always use the command.
+
+### Step 3: Log in
+
+1. Make sure the app is running (`npm run dev`).
+2. Open http://localhost:5173/dentist.
+3. Log in with `ana.reyes@example.com` and the password from Step 2. The account's email appears at the bottom of the sidebar.
+
+### If something goes wrong
+
+| Message | Fix |
+| --- | --- |
+| `Duplicate entry '...' for key 'email'` (Step 1) | That email already has an account. Skip to Step 2 to set its password |
+| `No account with the email ... in user_profiles.` (Step 2) | Step 1 was not done, or the email is spelled differently. Check the `user_profiles` table |
+| `The password must be at least 8 characters.` / `The passwords do not match.` | Run the command again |
+| `Incorrect email or password.` (Step 3) | Check the email, or set the password again with Step 2 |
+| `This account does not have access to the Dentist Panel.` | Set `role` to `dentist`, `staff` or `admin` and `status` to `active` in phpMyAdmin |
+
+To **reset a forgotten password**, run Step 2 again. To **remove an account**, delete its row from `user_profiles` in phpMyAdmin.
 
 ## Everyday use
 
