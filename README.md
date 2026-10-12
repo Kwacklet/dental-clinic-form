@@ -414,28 +414,107 @@ Use a made-up email for P4, because the lockout blocks that email for 15 minutes
 ## Project structure
 
 ```
-package.json                npm run setup / dev / set-password / init-db
-scripts/setup.js            installs packages, creates the .env files and the database
-scripts/dev.js              starts the server and the client together
-client/                     React + TypeScript (Vite)
-  src/api/axios.ts          the shared Axios instance (baseURL, token and 401 interceptors)
-  src/api/                  one file per resource: assessments, settings, auth
-  src/context/              login state shared with useContext (AuthProvider, useAuth)
-  src/hooks/useLoad.ts      custom hook: loading / data / error for a page
-  src/components/           patient form (Questionnaire, QuestionField, AnswerSummary, ...)
-  src/dentist/              Dentist Panel pages
-  src/data/questions.ts     every question, its type, and when it is shown
-  src/utils/                validation, branching, dates, navigation
-server/                     Express API
-  app.js                    middleware order and routes
-  controllers/              named route handlers
-  middleware/               logger, requireAuth, error handler
-  validation.js             server-side checks for a submitted form
-  db.js, config.js          connection pool and .env settings
-  schema.sql                database, tables and sample data
-  scripts/set-password.js   sets a Dentist Panel password
-  scripts/init-db.js        creates the database from schema.sql (if it does not exist)
+dental-clinic-form/
+├── package.json                    npm run setup / dev / set-password / init-db (run from this folder)
+├── scripts/
+│   ├── setup.js                    installs both parts, creates the .env files and the database
+│   └── dev.js                      starts the server and the client together in one terminal
+├── docs/screenshots/               the screenshots used in this README
+├── .gitignore                      keeps node_modules, .env files and database backups out of Git
+│
+├── client/                         React + TypeScript app (Vite), http://localhost:5173
+│   ├── .env.example                VITE_API_URL: address of the API
+│   ├── index.html                  the page that loads src/main.tsx
+│   ├── package.json                client libraries and scripts (dev, build, lint)
+│   ├── tsconfig.json               TypeScript settings
+│   ├── vite.config.ts              Vite settings
+│   ├── eslint.config.js            lint rules (TypeScript + React hooks)
+│   ├── public/
+│   │   ├── favicon.svg             tooth icon in the browser tab
+│   │   ├── fonts/                  Source Sans 3 / Source Serif 4, served locally
+│   │   └── _redirects              lets /dentist/... links work on Netlify
+│   └── src/
+│       ├── main.tsx                entry point: renders <App /> into the page
+│       ├── App.tsx                 picks the area from the URL: / = patient form, /dentist = Dentist Panel
+│       ├── PatientApp.tsx          patient flow: form → review → sent; holds the answers state, saves and resets the form
+│       ├── types.ts                shared TypeScript types (Question, Answers, Assessment, User, Settings)
+│       ├── index.css               base styles, colours and fonts
+│       ├── App.css                 styles for the patient form and shared elements
+│       │
+│       ├── api/                    every call to the server goes through here
+│       │   ├── axios.ts            the one Axios instance: baseURL, adds the login token, handles 401
+│       │   ├── assessments.ts      submit, list, get one, change status, delete
+│       │   ├── settings.ts         get and save the clinic settings
+│       │   └── auth.ts             log in, get the logged-in user
+│       │
+│       ├── hooks/
+│       │   └── useLoad.ts          custom hook: loads data when a page opens → { loading, data, error }
+│       │
+│       ├── context/
+│       │   ├── auth.ts             AuthContext and the useAuth() hook
+│       │   └── AuthProvider.tsx    keeps track of who is logged in (useContext)
+│       │
+│       ├── data/
+│       │   ├── questions.ts        every question: label, input type, required, when it is shown
+│       │   └── formSettings.ts     default clinic name / form title until the real ones load
+│       │
+│       ├── utils/
+│       │   ├── validation.ts       client-side checks: required, email, phone, name, date, number
+│       │   ├── answers.ts          shows/hides follow-up questions, removes hidden answers, fills in age
+│       │   ├── dates.ts            date parsing, age calculation, date formatting
+│       │   └── navigation.ts       changes pages without reloading (navigate, usePathname)
+│       │
+│       ├── components/             the patient form
+│       │   ├── Questionnaire.tsx   the multi-step form: onSubmit, handleChange, per-field errors
+│       │   ├── QuestionField.tsx   draws one question (text, date, select, radio, checkbox, slider, consent)
+│       │   ├── ProgressSteps.tsx   "Section 3 of 10" progress bar
+│       │   ├── AnswerSummary.tsx   "Review your answers" screen with Send to clinic
+│       │   ├── AssessmentAnswers.tsx  read-only table of answers (review screen and Dentist Panel)
+│       │   ├── AppHeader.tsx       blue header with the clinic name
+│       │   ├── Link.tsx            a link that changes pages without reloading
+│       │   └── ToothIcon.tsx       the tooth logo
+│       │
+│       └── dentist/                the Dentist Panel
+│           ├── DentistPanel.tsx    login gate, sidebar menu, and which page to show
+│           ├── DentistLogin.tsx    login form
+│           ├── DashboardPage.tsx   totals and the 5 most recent assessments
+│           ├── AssessmentsPage.tsx table of all assessments with View and Delete
+│           ├── AssessmentDetailPage.tsx  one assessment: mark reviewed, delete, all answers
+│           ├── SettingsPage.tsx    form to edit dentist name, clinic name, form title
+│           ├── DeleteButton.tsx    Delete button that asks "Yes, delete?" first
+│           ├── StatusBadge.tsx     coloured New / Reviewed label
+│           └── dentist.css         Dentist Panel styles
+│
+└── server/                         Express API, http://localhost:3000
+    ├── .env.example                PORT, CORS_ORIGIN, MySQL login, JWT_SECRET (no real values)
+    ├── package.json                server libraries and scripts (dev, start, set-password, init-db)
+    ├── app.js                      creates the app: cors → express.json → logger → routes → errors
+    ├── config.js                   reads server/.env
+    ├── db.js                       the MySQL connection pool (mysql2/promise)
+    ├── validation.js               server-side checks for a submitted form (returns the 400 message)
+    ├── schema.sql                  CREATE DATABASE, CREATE TABLE and sample INSERTs
+    ├── controllers/                named route handlers
+    │   ├── assessmentController.js list, get one, create, change status, delete
+    │   ├── settingsController.js   get and update the clinic settings
+    │   └── authController.js       login (bcrypt + JWT, lockout after 5 wrong tries), current user
+    ├── middleware/
+    │   ├── logger.js               prints every request, e.g. "POST /api/assessments 201 34ms"
+    │   ├── requireAuth.js          checks the JWT on Dentist Panel routes (401 if missing or invalid)
+    │   └── errorHandler.js         404 for unknown routes, 400 for broken JSON, 500 for server errors
+    └── scripts/
+        ├── init-db.js              creates the database from schema.sql if it does not exist
+        └── set-password.js         sets or resets a Dentist Panel password
 ```
+
+### How a form submission travels through these files
+
+1. The patient types in `QuestionField.tsx`; every change goes to `handleChange` in `Questionnaire.tsx`, which updates the one `answers` state object held in `PatientApp.tsx`.
+2. **Next** / **Review answers** runs `handleSubmit` (`onSubmit` + `event.preventDefault()`), which checks each field with `utils/validation.ts` and shows the errors beside the fields.
+3. On the review screen (`AnswerSummary.tsx`), **Send to clinic** calls `submitAssessment` in `api/assessments.ts`, which sends `POST /api/assessments` through the Axios instance in `api/axios.ts`.
+4. On the server, `app.js` passes the request through `cors`, `express.json` and `middleware/logger.js` to `createAssessment` in `controllers/assessmentController.js`.
+5. `validation.js` checks the data again; anything wrong returns **400** with a message.
+6. Valid data is saved with `?` placeholders through the pool in `db.js` (a `patients` row and a `dental_assessments` row, in one transaction), and the server answers **201**.
+7. Back in `PatientApp.tsx`, the form is reset and the "Thank you" message appears. The Dentist Panel pages load the new record with the `useLoad` hook.
 
 ## Bonus features
 
