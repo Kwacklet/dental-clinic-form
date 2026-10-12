@@ -280,19 +280,13 @@ Thunder Client sends requests straight to the API, without the React app. This t
 1. In VS Code, open **Extensions** (`Ctrl+Shift+X`), search **Thunder Client**, click **Install**.
 2. Click the lightning-bolt icon in the left sidebar. You will see **New Request**, and the tabs **Activity**, **Collections** and **Env**.
 
-### 2. Create an environment (saves typing)
+### 2. Create an environment for the login token
 
 1. Click **Env** → the menu (☰) or **+** → **New Environment**, name it `Dental local`.
-2. Add two variables and click **Save**:
-
-| Variable | Value |
-| --- | --- |
-| `baseUrl` | `http://localhost:3000/api` |
-| `token` | *(leave empty for now)* |
-
+2. Add one variable named `token` (leave the value empty for now) and click **Save**.
 3. Make it the active environment (star icon or "Set Active").
 
-You can now write `{{baseUrl}}` in URLs and `{{token}}` as the login token.
+You can now write `{{token}}` instead of pasting the long login token into every request. All URLs below are complete, so you can copy and paste them as they are.
 
 ### 3. Create a collection
 
@@ -302,7 +296,7 @@ Click **Collections** → **New Collection** and name it `Dental API`. Save ever
 
 Create a request:
 
-- Method **POST**, URL `{{baseUrl}}/auth/login`
+- Method **POST**, URL `http://localhost:3000/api/auth/login`
 - **Body** tab → **JSON**:
   ```json
   { "email": "dentist@example.com", "password": "the password from Step 6" }
@@ -321,13 +315,13 @@ Send these in order. The server terminal logs each one.
 
 | # | Request | Body (JSON) | Expected |
 | --- | --- | --- | --- |
-| H1 | GET `{{baseUrl}}/settings` | none | **200**, clinic name, dentist name, form title |
-| H2 | GET `{{baseUrl}}/assessments` 🔒 | none | **200**, a list of assessments |
-| H3 | POST `{{baseUrl}}/assessments` | the valid body below | **201**, e.g. `{ "id": 4, "patientId": 4, "message": "Assessment saved." }` (your numbers may differ) |
-| H4 | GET `{{baseUrl}}/assessments/ID` 🔒 | none | **200**, the record you just created |
-| H5 | PATCH `{{baseUrl}}/assessments/ID/status` 🔒 | `{ "status": "Reviewed" }` | **200**, `{ "id": ..., "status": "Reviewed" }` |
-| H6 | DELETE `{{baseUrl}}/assessments/ID` 🔒 | none | **200**, `{ "id": ..., "message": "Assessment deleted." }` |
-| H7 | GET `{{baseUrl}}/auth/me` 🔒 | none | **200**, the logged-in user |
+| H1 | GET `http://localhost:3000/api/settings` | none | **200**, clinic name, dentist name, form title |
+| H2 | GET `http://localhost:3000/api/assessments` 🔒 | none | **200**, a list of assessments |
+| H3 | POST `http://localhost:3000/api/assessments` | the valid body below | **201**, e.g. `{ "id": 4, "patientId": 4, "message": "Assessment saved." }` (your numbers may differ) |
+| H4 | GET `http://localhost:3000/api/assessments/ID` 🔒 | none | **200**, the record you just created |
+| H5 | PATCH `http://localhost:3000/api/assessments/ID/status` 🔒 | `{ "status": "Reviewed" }` | **200**, `{ "id": ..., "status": "Reviewed" }` |
+| H6 | DELETE `http://localhost:3000/api/assessments/ID` 🔒 | none | **200**, `{ "id": ..., "message": "Assessment deleted." }` |
+| H7 | GET `http://localhost:3000/api/auth/me` 🔒 | none | **200**, the logged-in user |
 
 Replace `ID` with the `id` returned by H3, so you only change your own test record. Open the Dentist Panel after H3 and after H6 to see the record appear and disappear.
 
@@ -349,7 +343,7 @@ Replace `ID` with the `id` returned by H3, so you only change your own test reco
 
 ### 6. Validation tests (400 Bad Request)
 
-Each test sends invalid data to `POST {{baseUrl}}/assessments`. Start from the valid body above and change **only** what the table says. Every one must return **400** with the message shown, and **nothing is saved** (check with H2 that the list did not grow).
+Each test sends invalid data to `POST http://localhost:3000/api/assessments`. Start from the valid body above and change **only** what the table says. Every one must return **400** with the message shown, and **nothing is saved** (check with H2 that the list did not grow).
 
 | # | What to change in the valid body | Expected message (`error`) | `field` |
 | --- | --- | --- | --- |
@@ -369,28 +363,28 @@ Other 400 responses:
 
 | # | Request | Body | Expected message |
 | --- | --- | --- | --- |
-| V12 | PATCH `{{baseUrl}}/assessments/1/status` 🔒 | `{ "status": "Done" }` | `Status must be "New" or "Reviewed".` |
-| V13 | GET `{{baseUrl}}/assessments/abc` 🔒 | none | `The id must be a positive whole number.` |
-| V14 | PUT `{{baseUrl}}/settings` 🔒 | `{}` | `All settings fields are required.` |
-| V15 | POST `{{baseUrl}}/auth/login` | `{}` | `Email and password are required.` |
+| V12 | PATCH `http://localhost:3000/api/assessments/1/status` 🔒 | `{ "status": "Done" }` | `Status must be "New" or "Reviewed".` |
+| V13 | GET `http://localhost:3000/api/assessments/abc` 🔒 | none | `The id must be a positive whole number.` |
+| V14 | PUT `http://localhost:3000/api/settings` 🔒 | `{}` | `All settings fields are required.` |
+| V15 | POST `http://localhost:3000/api/auth/login` | `{}` | `Email and password are required.` |
 
 ### 7. Not found (404)
 
 | # | Request | Expected |
 | --- | --- | --- |
-| N1 | GET `{{baseUrl}}/assessments/99999` 🔒 | **404** `Assessment 99999 was not found.` |
+| N1 | GET `http://localhost:3000/api/assessments/99999` 🔒 | **404** `Assessment 99999 was not found.` |
 | N2 | DELETE the record from H6 again 🔒 | **404** `Assessment ID was not found.` |
-| N3 | PATCH `{{baseUrl}}/assessments/99999/status` 🔒 with `{ "status": "New" }` | **404** |
-| N4 | GET `{{baseUrl}}/nothing` | **404** `No route for GET /api/nothing.` |
+| N3 | PATCH `http://localhost:3000/api/assessments/99999/status` 🔒 with `{ "status": "New" }` | **404** |
+| N4 | GET `http://localhost:3000/api/nothing` | **404** `No route for GET /api/nothing.` |
 
 ### 8. Login and protection (401, 429)
 
 | # | Request | Expected |
 | --- | --- | --- |
-| P1 | GET `{{baseUrl}}/assessments` with **Auth → None** | **401** `Please log in.` |
+| P1 | GET `http://localhost:3000/api/assessments` with **Auth → None** | **401** `Please log in.` |
 | P2 | Same, with Bearer token `abc.def.ghi` | **401** `Your session has ended. Please log in again.` |
-| P3 | POST `{{baseUrl}}/auth/login` with a wrong password | **401** `Incorrect email or password.` |
-| P4 | POST `{{baseUrl}}/auth/login` with `{ "email": "test@example.com", "password": "x" }`, sent 6 times | first 5: **401**; 6th: **429** `Too many failed attempts. Try again in 15 minutes.` |
+| P3 | POST `http://localhost:3000/api/auth/login` with a wrong password | **401** `Incorrect email or password.` |
+| P4 | POST `http://localhost:3000/api/auth/login` with `{ "email": "test@example.com", "password": "x" }`, sent 6 times | first 5: **401**; 6th: **429** `Too many failed attempts. Try again in 15 minutes.` |
 
 Use a made-up email for P4, because the lockout blocks that email for 15 minutes (restarting the server clears it).
 
