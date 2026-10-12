@@ -14,7 +14,13 @@ const MAX_LENGTHS = {
   preferredName: 60, address: 200, occupation: 100,
   emergencyContactName: 100, emergencyContactRelationship: 60, visitReasonsOther: 150
 };
-const SCALES = ['toothachePain', 'anxietyLevel'];
+const REQUIRED = [
+  ['dateOfBirth', 'Date of birth'], ['age', 'Age'], ['sex', 'Sex'], ['mobileNumber', 'Mobile number'],
+  ['email', 'Email address'], ['address', 'Address'], ['occupation', 'Occupation'],
+  ['emergencyContactName', 'Emergency contact name'], ['emergencyContactNumber', 'Emergency contact number'],
+  ['emergencyContactRelationship', 'Relationship to patient']
+];
+const SCALES =['toothachePain', 'anxietyLevel'];
 const CONSENTS = ['consentAccurate', 'consentInformChanges', 'consentPrivacy'];
 
 const isBlank = (value) => value === undefined || value === null || value === '';
@@ -37,6 +43,11 @@ export function validateAssessment(answers) {
     if (!value) return { field, message: `${label} is required.` };
     if (value.length > 60) return { field, message: `${label} must be 60 characters or fewer.` };
     if (!NAME_PATTERN.test(value)) return { field, message: `${label} can only use letters, spaces, hyphens and apostrophes.` };
+  }
+
+  for (const [field, label] of REQUIRED) {
+    const value = typeof answers[field] === 'string' ? answers[field].trim() : answers[field];
+    if (isBlank(value)) return { field, message: `${label} is required.` };
   }
 
   if (!isRealPastDate(answers.dateOfBirth)) {

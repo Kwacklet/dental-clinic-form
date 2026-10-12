@@ -332,7 +332,7 @@ Send these in order. The terminal running `npm run dev` logs each one.
 
 Replace `ID` with the `id` returned by H3, so you only change your own test record. Open the Dentist Panel after H3 and after H6 to see the record appear and disappear.
 
-**Valid body** (the smallest form the server accepts) for H3:
+**Valid body** (the smallest form the server accepts: every patient-information field except the preferred name, plus the three consents) for H3:
 
 ```json
 {
@@ -340,7 +340,15 @@ Replace `ID` with the `id` returned by H3, so you only change your own test reco
     "lastName": "Cruz",
     "firstName": "Ana",
     "dateOfBirth": "2000-01-15",
+    "age": 25,
+    "sex": "Female",
     "mobileNumber": "09171234567",
+    "email": "ana.cruz@example.com",
+    "address": "12 Mabini St, Quezon City",
+    "occupation": "Teacher",
+    "emergencyContactName": "Jose Cruz",
+    "emergencyContactNumber": "09181234567",
+    "emergencyContactRelationship": "Father",
     "consentAccurate": true,
     "consentInformChanges": true,
     "consentPrivacy": true
@@ -360,11 +368,12 @@ Each test sends invalid data to `POST http://localhost:3000/api/assessments`. St
 | V4 | `"dateOfBirth": "2999-01-01"` (future) | `Date of birth must be a real date (YYYY-MM-DD), not in the future.` | `dateOfBirth` |
 | V5 | `"dateOfBirth": "2000-02-30"` (no such day) | same as V4 | `dateOfBirth` |
 | V6 | `"mobileNumber": "12345"` | `Mobile number must be 7 to 15 digits.` | `mobileNumber` |
-| V7 | add `"email": "not-an-email"` | `Email address is not valid.` | `email` |
-| V8 | add `"sex": "Unknown"` | `sex must be one of: Male, Female, Prefer not to say, Other.` | `sex` |
+| V7 | `"email": "not-an-email"` | `Email address is not valid.` | `email` |
+| V8 | `"sex": "Unknown"` | `sex must be one of: Male, Female, Prefer not to say, Other.` | `sex` |
 | V9 | add `"anxietyLevel": 15` | `anxietyLevel must be a whole number from 0 to 10.` | `anxietyLevel` |
 | V10 | remove `"consentPrivacy": true` | `All three consent boxes must be ticked.` | `consentPrivacy` |
 | V11 | Type broken JSON, e.g. `{ "answers": ` | `The request body is not valid JSON.` | (none) |
+| V16 | remove `"occupation"` (any patient-information field except `preferredName` works the same way) | `Occupation is required.` | `occupation` |
 
 Other 400 responses:
 
