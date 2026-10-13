@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { saveSettings } from '../api/settings'
-import { isEmpty } from '../utils/validation'
+import { getFieldErrors, settingsSchema } from '../utils/validation'
 import type { Settings } from '../types'
 
 const FIELDS: { id: keyof Settings; label: string }[] = [
@@ -24,14 +24,15 @@ function SettingsPage({ settings, onSaved }: SettingsPageProps) {
   function handleChange(id: keyof Settings, value: string) {
     setValues((previous) => ({ ...previous, [id]: value }))
     setSaved(false)
-    if (errors[id]) setErrors((previous) => ({ ...previous, [id]: isEmpty(value) ? 'This field is required.' : '' }))
+    if (errors[id]) {
+      const message = getFieldErrors(settingsSchema, { ...values, [id]: value })[id] ?? ''
+      setErrors((previous) => ({ ...previous, [id]: message }))
+    }
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    const newErrors = Object.fromEntries(
-      FIELDS.filter((field) => isEmpty(values[field.id])).map((field) => [field.id, 'This field is required.']),
-    )
+    const newErrors = getFieldErrors(settingsSchema, values)
     setErrors(newErrors)
     if (Object.keys(newErrors).length > 0) return
 

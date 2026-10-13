@@ -24,8 +24,8 @@ A full-stack health check questionnaire for a dental clinic. Patients fill in a 
 
 | Part | Tools |
 | --- | --- |
-| Frontend (`client/`) | React 19, TypeScript, Vite, Axios |
-| Backend (`server/`) | Node.js, Express 5, mysql2/promise, bcryptjs, jsonwebtoken, dotenv, cors |
+| Frontend (`client/`) | React 19, TypeScript, Vite, Axios, Zod |
+| Backend (`server/`) | Node.js, Express 5, mysql2/promise, Zod, bcryptjs, jsonwebtoken, dotenv, cors |
 | Database | MySQL / MariaDB (tested with XAMPP's MariaDB 10.4) |
 
 ## Setting up on a new computer
@@ -468,7 +468,7 @@ dental-clinic-form/
 │       │   └── formSettings.ts     default clinic name / form title until the real ones load
 │       │
 │       ├── utils/
-│       │   ├── validation.ts       client-side checks: required, email, phone, name, date, number
+│       │   ├── validation.ts       Zod schemas: one per question (built from questions.ts), plus the login and settings forms
 │       │   ├── answers.ts          shows/hides follow-up questions, removes hidden answers, fills in age
 │       │   ├── dates.ts            date parsing, age calculation, date formatting
 │       │   └── navigation.ts       changes pages without reloading (navigate, usePathname)
@@ -500,7 +500,7 @@ dental-clinic-form/
     ├── app.js                      creates the app: cors → express.json → logger → routes → errors
     ├── config.js                   reads server/.env
     ├── db.js                       the MySQL connection pool (mysql2/promise)
-    ├── validation.js               server-side checks for a submitted form (returns the 400 message)
+    ├── validation.js               Zod schema (assessmentSchema) for a submitted form; the first problem becomes the 400 message
     ├── schema.sql                  CREATE DATABASE, CREATE TABLE and sample INSERTs
     ├── controllers/                named route handlers
     │   ├── assessmentController.js list, get one, create, change status, delete
@@ -518,10 +518,10 @@ dental-clinic-form/
 ### How a form submission travels through these files
 
 1. The patient types in `QuestionField.tsx`; every change goes to `handleChange` in `Questionnaire.tsx`, which updates the one `answers` state object held in `PatientApp.tsx`.
-2. **Next** / **Review answers** runs `handleSubmit` (`onSubmit` + `event.preventDefault()`), which checks each field with `utils/validation.ts` and shows the errors beside the fields.
+2. **Next** / **Review answers** runs `handleSubmit` (`onSubmit` + `event.preventDefault()`), which checks each field against its Zod schema in `utils/validation.ts` and shows the errors beside the fields.
 3. On the review screen (`AnswerSummary.tsx`), **Send to clinic** calls `submitAssessment` in `api/assessments.ts`, which sends `POST /api/assessments` through the Axios instance in `api/axios.ts`.
 4. On the server, `app.js` passes the request through `cors`, `express.json` and `middleware/logger.js` to `createAssessment` in `controllers/assessmentController.js`.
-5. `validation.js` checks the data again; anything wrong returns **400** with a message.
+5. The Zod schema in `validation.js` checks the data again; anything wrong returns **400** with a message and the `field` it is about.
 6. Valid data is saved with `?` placeholders through the pool in `db.js` (a `patients` row and a `dental_assessments` row, in one transaction), and the server answers **201**.
 7. Back in `PatientApp.tsx`, the form is reset and the "Thank you" message appears. The Dentist Panel pages load the new record with the `useLoad` hook.
 
@@ -541,4 +541,4 @@ dental-clinic-form/
 
 ## Use of AI tools
 
-This project was built with help from Claude (Anthropic), an AI assistant. It was used to restructure the code into `client/` and `server/`, convert the frontend to TypeScript, add Axios, JWT login and server-side validation, write `schema.sql`, and draft this README. The changes were tested end to end against the database.
+This project was built with help from Claude (Anthropic), an AI assistant. It was used to restructure the code into `client/` and `server/`, convert the frontend to TypeScript, add Axios, JWT login and server-side validation with a Zod schema, write `schema.sql`, and draft this README. The changes were tested end to end against the database.

@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import ToothIcon from '../components/ToothIcon'
 import { useAuth } from '../context/auth'
-import { isEmpty, validateEmail } from '../utils/validation'
+import { getFieldErrors, loginSchema } from '../utils/validation'
 
 function DentistLogin() {
   const { logIn } = useAuth()
@@ -13,10 +13,8 @@ function DentistLogin() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    const newErrors = {
-      email: validateEmail(email),
-      password: isEmpty(password) ? 'Password is required.' : '',
-    }
+    const fieldErrors = getFieldErrors(loginSchema, { email, password })
+    const newErrors = { email: fieldErrors.email ?? '', password: fieldErrors.password ?? '' }
     setErrors(newErrors)
     setLoginError('')
     if (newErrors.email || newErrors.password) return
