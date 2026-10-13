@@ -3,8 +3,10 @@ import { getTodayISO, parseISODate } from './dates'
 import type { AnswerValue, Question } from '../types'
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
-const PHONE_PATTERN = /^\d{7,15}$/
-const NAME_PATTERN = /^[A-Za-zÀ-ÿ' .-]+$/
+const PHONE_PATTERN = /^09\d{9}$/
+const NAME_PATTERN = /^[\p{L}' .-]+$/u
+const LETTERS_PATTERN = /^[\p{L} ]+$/u
+const LETTERS_HYPHEN_PATTERN = /^[\p{L} -]+$/u
 
 const REQUIRED = 'This field is required.'
 
@@ -50,7 +52,7 @@ function filledSchema(question: Question): z.ZodType {
   const required = {
     error: (issue: { input?: unknown }) => (issue.input === undefined ? emptyMessage(question) : 'This answer is not valid.'),
   }
-  const { min, max, maxLength, exclusiveOption } = question
+  const { min, max, maxLength, exclusiveOption, allowHyphens } = question
 
   switch (question.type) {
     case 'checkbox':
@@ -63,9 +65,15 @@ function filledSchema(question: Question): z.ZodType {
     case 'email':
       return z.string(required).trim().regex(EMAIL_PATTERN, 'Enter a valid email address (e.g. name@example.com).')
     case 'tel':
-      return z.string(required).regex(PHONE_PATTERN, 'Enter numbers only (7 to 15 digits).')
+      return z.string(required).regex(PHONE_PATTERN, 'Enter an 11-digit Philippine mobile number starting with 09 (e.g. 09171234567).')
     case 'name':
       return z.string(required).trim().regex(NAME_PATTERN, 'Use letters, spaces, hyphens and apostrophes only.')
+    case 'letters': {
+      const letters = allowHyphens
+        ? z.string(required).trim().regex(LETTERS_HYPHEN_PATTERN, 'Use letters, spaces and hyphens only.')
+        : z.string(required).trim().regex(LETTERS_PATTERN, 'Use letters and spaces only.')
+      return maxLength ? letters.max(maxLength, `Must be ${maxLength} characters or fewer.`) : letters
+    }
     case 'date':
       return z
         .string(required)

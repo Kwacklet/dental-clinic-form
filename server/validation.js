@@ -1,7 +1,9 @@
 import { z } from 'zod';
 
-const NAME_PATTERN = /^[A-Za-zÀ-ÿ' .-]+$/;
-const PHONE_PATTERN = /^\d{7,15}$/;
+const NAME_PATTERN = /^[\p{L}' .-]+$/u;
+const PHONE_PATTERN = /^09\d{9}$/;
+const LETTERS_PATTERN = /^[\p{L} ]+$/u;
+const LETTERS_HYPHEN_PATTERN = /^[\p{L} -]+$/u;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -41,7 +43,13 @@ const name = (label) =>
 const text = (field, label, max) =>
   requiredText(label).max(max, `${field} must be text of ${max} characters or fewer.`);
 
-const phone = (label) => requiredText(label).regex(PHONE_PATTERN, `${label} must be 7 to 15 digits.`);
+const letters = (field, label, max, { allowHyphens = false } = {}) =>
+  allowHyphens
+    ? text(field, label, max).regex(LETTERS_HYPHEN_PATTERN, `${label} can only use letters, spaces and hyphens.`)
+    : text(field, label, max).regex(LETTERS_PATTERN, `${label} can only use letters and spaces.`);
+
+const phone = (label) =>
+  requiredText(label).regex(PHONE_PATTERN, `${label} must be 11 digits starting with 09 (e.g. 09171234567).`);
 
 const choice = (field, options) => optional(z.enum(options, { error: `${field} must be one of: ${options.join(', ')}.` }));
 
@@ -71,10 +79,10 @@ export const assessmentSchema = z.looseObject(
       .max(100, 'Email address is not valid.')
       .regex(EMAIL_PATTERN, 'Email address is not valid.'),
     address: text('address', 'Address', 200),
-    occupation: text('occupation', 'Occupation', 100),
-    emergencyContactName: text('emergencyContactName', 'Emergency contact name', 100),
+    occupation: letters('occupation', 'Occupation', 100),
+    emergencyContactName: name('Emergency contact name'),
     emergencyContactNumber: phone('Emergency contact number'),
-    emergencyContactRelationship: text('emergencyContactRelationship', 'Relationship to patient', 60),
+    emergencyContactRelationship: letters('emergencyContactRelationship', 'Relationship to patient', 60, { allowHyphens: true }),
     preferredName: optional(z.string({ error: 'preferredName must be text.' }).max(60, 'preferredName must be text of 60 characters or fewer.')),
     takingMedications: choice('takingMedications', YES_NO_NOT_SURE),
     hasAllergies: choice('hasAllergies', YES_NO_NOT_SURE),

@@ -4,6 +4,7 @@ export type Answers = Record<string, AnswerValue>
 export type QuestionType =
   | 'text'
   | 'name'
+  | 'letters'
   | 'email'
   | 'tel'
   | 'number'
@@ -32,6 +33,7 @@ export interface Question {
   min?: number
   max?: number
   maxLength?: number
+  allowHyphens?: boolean
   minLabel?: string
   maxLabel?: string
   showIf?: ShowIfRule

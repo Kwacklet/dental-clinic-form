@@ -276,7 +276,7 @@ Base URL: `http://localhost:3000/api`. Routes marked 🔒 need the header `Autho
 | POST | `/auth/login` | Log in, returns `{ token, user }` | 200, 400, 401, 403, 429 |
 | GET | `/auth/me` 🔒 | The logged-in user | 200, 401 |
 
-An invalid request returns `400` with a message and the field, e.g. `{ "error": "Mobile number must be 7 to 15 digits.", "field": "mobileNumber" }`.
+An invalid request returns `400` with a message and the field, e.g. `{ "error": "Mobile number must be 11 digits starting with 09 (e.g. 09171234567).", "field": "mobileNumber" }`.
 
 ## Testing the API with Thunder Client
 
@@ -367,7 +367,7 @@ Each test sends invalid data to `POST http://localhost:3000/api/assessments`. St
 | V3 | `"lastName": "Cruz123"` | `Last name can only use letters, spaces, hyphens and apostrophes.` | `lastName` |
 | V4 | `"dateOfBirth": "2999-01-01"` (future) | `Date of birth must be a real date (YYYY-MM-DD), not in the future.` | `dateOfBirth` |
 | V5 | `"dateOfBirth": "2000-02-30"` (no such day) | same as V4 | `dateOfBirth` |
-| V6 | `"mobileNumber": "12345"` | `Mobile number must be 7 to 15 digits.` | `mobileNumber` |
+| V6 | `"mobileNumber": "12345"` | `Mobile number must be 11 digits starting with 09 (e.g. 09171234567).` | `mobileNumber` |
 | V7 | `"email": "not-an-email"` | `Email address is not valid.` | `email` |
 | V8 | `"sex": "Unknown"` | `sex must be one of: Male, Female, Prefer not to say, Other.` | `sex` |
 | V9 | add `"anxietyLevel": 15` | `anxietyLevel must be a whole number from 0 to 10.` | `anxietyLevel` |

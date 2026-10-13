@@ -32,6 +32,8 @@ function QuestionField({ question, value, error, onChange, onBlur, isFollowUp, n
   function handleTextChange(event: TextInputEvent) {
     let newValue = event.target.value
     if (type === 'number' || type === 'tel') newValue = newValue.replace(/\D/g, '')
+    if (type === 'letters') newValue = newValue.replace(question.allowHyphens ? /[^\p{L} -]/gu : /[^\p{L} ]/gu, '')
+    if (type === 'name') newValue = newValue.replace(/[^\p{L} '.-]/gu, '')
     onChange(id, newValue)
   }
 
